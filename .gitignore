@@ -1,0 +1,132 @@
+# ==============================================================================
+# MindMate — root .gitignore
+# ==============================================================================
+
+# ─── Secrets & environment ────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.env
+!**/.env.example
+*.pem
+*.key
+secrets.json
+credentials.json
+
+# ─── Python (backend) ─────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+backend/venv/
+backend/.venv/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+
+# ─── Databases (app targets Postgres; no local SQLite in VCS) ─────────────────
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+mindmate.db
+test_mindmate.db
+
+# Alembic — keep versions/ and env.py; ignore nothing extra by default
+
+# ─── Node / Next.js (frontend) ────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Next.js build output
+.next/
+out/
+frontend/.next/
+frontend/out/
+
+# Stale Vite artifacts (frontend migrated to Next.js)
+.vite/
+frontend/.vite/
+frontend/dist/
+
+# Production build
+build/
+
+# Misc frontend
+*.tsbuildinfo
+next-env.d.ts
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ─── Editors / IDEs ───────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ─── OS files ─────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ─── Docker ───────────────────────────────────────────────────────────────────
+# (compose files are tracked; local overrides are not)
+docker-compose.override.yml
+
+# ─── Deployment / platform ────────────────────────────────────────────────────
+.vercel
+.render

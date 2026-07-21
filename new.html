@@ -1,0 +1,1579 @@
+<!-- Design System -->
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mind Mate | Your Digital Sanctuary</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#ccebc8",
+                        "on-background": "#1b1c19",
+                        "on-surface": "#1b1c19",
+                        "on-surface-variant": "#55433c",
+                        "outline": "#87736b",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#334d34",
+                        "secondary": "#4a654a",
+                        "on-primary-fixed": "#360f00",
+                        "background": "#fbf9f4",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#ffb597",
+                        "surface-container-low": "#f5f3ee",
+                        "on-tertiary-fixed-variant": "#614000",
+                        "secondary-fixed-dim": "#b0ceae",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#d97d54",
+                        "tertiary-fixed": "#ffddb0",
+                        "outline-variant": "#dac1b8",
+                        "surface-dim": "#dbdad5",
+                        "primary-fixed-dim": "#ffb597",
+                        "tertiary": "#805600",
+                        "surface-container-high": "#eae8e3",
+                        "inverse-on-surface": "#f2f1ec",
+                        "on-secondary-fixed": "#07200b",
+                        "surface-bright": "#fbf9f4",
+                        "primary-fixed": "#ffdbcd",
+                        "on-primary-container": "#541c00",
+                        "on-tertiary-container": "#412900",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#77320e",
+                        "surface-container-highest": "#e4e2dd",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#506b50",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#291800",
+                        "surface": "#fbf9f4",
+                        "primary": "#964824",
+                        "secondary-fixed": "#ccebc8",
+                        "tertiary-container": "#bf8c39",
+                        "on-error": "#ffffff",
+                        "surface-container": "#f0eee9",
+                        "surface-tint": "#964824",
+                        "inverse-surface": "#30312e",
+                        "tertiary-fixed-dim": "#f6bc64",
+                        "surface-variant": "#e4e2dd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "40px",
+                        "container-max-width": "1200px",
+                        "chat-width": "768px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Work Sans"],
+                        "headline-lg-mobile": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "body-lg": ["Work Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-lg": ["Manrope"],
+                        "headline-sm": ["Manrope"],
+                        "body-sm": ["Work Sans"],
+                        "label-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fbf9f4;
+            color: #1b1c19;
+            overflow-x: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #dac1b8;
+            border-radius: 10px;
+        }
+
+        .persona-item:hover .chevron-icon {
+            transform: translateX(2px);
+        }
+
+        .chevron-icon {
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+
+<body class="font-body-md text-body-md antialiased">
+    <!-- Sidebar Navigation -->
+    <aside
+        class="hidden md:flex flex-col h-full w-80 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest p-gutter gap-base shadow-sm shadow-primary/10 z-50">
+        <!-- Logo Header -->
+        <div class="flex flex-col gap-1 mb-8">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-3xl" data-icon="psychology">psychology</span>
+                <h1 class="font-headline-sm text-headline-sm font-bold text-primary">Mind Mate</h1>
+            </div>
+            <p class="text-on-surface-variant font-label-sm text-label-sm opacity-70">Your digital sanctuary</p>
+        </div>
+        <!-- CTA -->
+        <button
+            class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-label-md text-label-md transition-all scale-98 active:scale-95 duration-150 hover:shadow-lg hover:shadow-primary/20 mb-6">
+            <span class="material-symbols-outlined" data-icon="add">add</span>
+            New Conversation
+        </button>
+        <!-- Personas Section -->
+        <div class="flex flex-col gap-2 flex-grow">
+            <h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2 px-2">Personas
+            </h2>
+            <nav class="flex flex-col gap-1">
+                <!-- Riya (Active Example) -->
+                <a class="persona-item flex items-center justify-between p-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-all hover:bg-surface-container-high"
+                    href="#">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined" data-icon="face">face</span>
+                        <span class="font-label-md text-label-md">Riya</span>
+                    </div>
+                    <span class="material-symbols-outlined chevron-icon" data-icon="chevron_right">chevron_right</span>
+                </a>
+                <!-- Arjun -->
+                <a class="persona-item flex items-center justify-between p-3 text-on-surface-variant dark:text-outline-variant rounded-lg transition-all hover:bg-surface-container-high"
+                    href="#">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined" data-icon="face_2">face_2</span>
+                        <span class="font-label-md text-label-md">Arjun</span>
+                    </div>
+                    <span class="material-symbols-outlined chevron-icon" data-icon="chevron_right">chevron_right</span>
+                </a>
+                <!-- Alex -->
+                <a class="persona-item flex items-center justify-between p-3 text-on-surface-variant dark:text-outline-variant rounded-lg transition-all hover:bg-surface-container-high"
+                    href="#">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined" data-icon="face_3">face_3</span>
+                        <span class="font-label-md text-label-md">Alex</span>
+                    </div>
+                    <span class="material-symbols-outlined chevron-icon" data-icon="chevron_right">chevron_right</span>
+                </a>
+                <!-- The Guide -->
+                <a class="persona-item flex items-center justify-between p-3 text-on-surface-variant dark:text-outline-variant rounded-lg transition-all hover:bg-surface-container-high"
+                    href="#">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+                        <span class="font-label-md text-label-md">The Guide</span>
+                    </div>
+                    <span class="material-symbols-outlined chevron-icon" data-icon="chevron_right">chevron_right</span>
+                </a>
+            </nav>
+        </div>
+        <!-- Footer Navigation -->
+        <div class="flex flex-col gap-1 pt-4 border-t border-outline-variant/30">
+            <a class="flex items-center gap-3 p-3 text-on-surface-variant dark:text-outline-variant rounded-lg transition-all hover:bg-surface-container-high"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+                <span class="font-label-md text-label-md">Resources</span>
+            </a>
+            <a class="flex items-center gap-3 p-3 text-on-surface-variant dark:text-outline-variant rounded-lg transition-all hover:bg-surface-container-high"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span class="font-label-md text-label-md">Settings</span>
+            </a>
+        </div>
+    </aside>
+    <!-- Main Content Area -->
+    <main class="md:ml-80 flex flex-col h-screen relative bg-background">
+        <!-- Top App Bar (Mobile & Header Context) -->
+        <header
+            class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-base bg-background dark:bg-on-background sticky top-0 z-40">
+            <div class="flex items-center gap-2 md:hidden">
+                <span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+                <span class="font-headline-sm text-headline-sm font-bold text-primary">Mind Mate</span>
+            </div>
+            <div class="hidden md:block">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Mind Mate Assistant</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
+                    <span class="material-symbols-outlined" data-icon="history">history</span>
+                </button>
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+                    <img class="w-full h-full object-cover"
+                        data-alt="A warm and inviting professional portrait of a smiling woman in her late 20s with a kind expression. She is in a softly lit, modern home office with a blurred background of green houseplants and neutral decor. The lighting is soft and golden, emphasizing a light-mode aesthetic. The style is professional yet approachable, reflecting the brand's empathetic and supportive identity."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEZaqhxaxCxy1eOGz-rgcLUT5zT9AJx9bPuGX12WefbJRmDxikvaIOmkGRwb-2GQZWtPSIYwalDiVcTqnVPfd_xKI42OABRDT4ojl_RRyOUElOfpWEIjGjOXnTS16r7ZTZ4_ybetJQ5QhLPPIgcZWlbknfnTvJxTjZSs--Y7Ab3yT_i1Lnf7XpDO1WO7hjUDDywjZrvzTUvWeRBs4D-Ke_KiqI6jacd9tiimPfv1TvbYhwwMCh1YS7mpNKcOOcmaTy_bwrEDXd7uB8" />
+                </div>
+            </div>
+        </header>
+        <!-- Chat Container -->
+        <section
+            class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop overflow-y-auto chat-container">
+            <!-- Empty State -->
+            <div class="max-w-chat-width w-full flex flex-col items-center text-center animate-fade-in transition-opacity duration-700"
+                id="empty-state">
+                <div class="w-24 h-24 mb-8 bg-primary-container/20 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary-container text-5xl"
+                        style="font-variation-settings: 'FILL' 1;">spa</span>
+                </div>
+                <h3 class="font-headline-lg text-headline-lg text-on-surface mb-4">Hi, I'm here to listen.</h3>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">Which persona would you like to
+                    talk to today?</p>
+                <!-- Quick Suggestions -->
+                <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                    <button
+                        class="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 hover:border-primary-container hover:bg-white transition-all group">
+                        <span
+                            class="material-symbols-outlined text-primary mb-2 block group-hover:scale-110 transition-transform"
+                            data-icon="mood">mood</span>
+                        <span class="font-label-md text-label-md">Check-in</span>
+                    </button>
+                    <button
+                        class="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 hover:border-primary-container hover:bg-white transition-all group">
+                        <span
+                            class="material-symbols-outlined text-primary mb-2 block group-hover:scale-110 transition-transform"
+                            data-icon="self_improvement">self_improvement</span>
+                        <span class="font-label-md text-label-md">Meditate</span>
+                    </button>
+                    <button
+                        class="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 hover:border-primary-container hover:bg-white transition-all group">
+                        <span
+                            class="material-symbols-outlined text-primary mb-2 block group-hover:scale-110 transition-transform"
+                            data-icon="edit_note">edit_note</span>
+                        <span class="font-label-md text-label-md">Journal</span>
+                    </button>
+                    <button
+                        class="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 hover:border-primary-container hover:bg-white transition-all group">
+                        <span
+                            class="material-symbols-outlined text-primary mb-2 block group-hover:scale-110 transition-transform"
+                            data-icon="lightbulb">lightbulb</span>
+                        <span class="font-label-md text-label-md">Advice</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Conversation Space (Hidden initially) -->
+            <div class="hidden w-full max-w-chat-width flex flex-col gap-gutter py-8" id="chat-messages">
+                <!-- AI Message -->
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-on-secondary-container text-sm"
+                            data-icon="face">face</span>
+                    </div>
+                    <div
+                        class="bg-secondary-container/30 text-on-surface p-4 rounded-3xl rounded-tl-sm border border-secondary-container/50 max-w-[80%]">
+                        <p class="font-body-md text-body-md">Hello! I'm Riya. How are you feeling in this moment? I'm
+                            here to support you through whatever is on your mind.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Bottom Input Bar -->
+        <footer
+            class="w-full flex justify-center p-gutter bg-gradient-to-t from-background via-background to-transparent sticky bottom-0">
+            <div class="max-w-chat-width w-full relative">
+                <div class="relative flex items-center">
+                    <input
+                        class="w-full h-16 pl-14 pr-20 bg-white border-none rounded-full shadow-[0_8px_30px_rgb(217,125,84,0.08)] focus:ring-2 focus:ring-primary-container/20 font-body-md text-body-md placeholder:text-on-surface-variant/40 transition-shadow"
+                        placeholder="Message Mind Mate..." type="text" />
+                    <!-- Left Action -->
+                    <div class="absolute left-4 flex items-center justify-center">
+                        <button class="p-2 text-on-surface-variant/60 hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined" data-icon="attach_file">attach_file</span>
+                        </button>
+                    </div>
+                    <!-- Right Action -->
+                    <div class="absolute right-3 flex items-center gap-2">
+                        <button class="p-2 text-on-surface-variant/60 hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined" data-icon="mic">mic</span>
+                        </button>
+                        <button
+                            class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                            <span class="material-symbols-outlined" data-icon="arrow_upward">arrow_upward</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-center gap-3">
+                    <span
+                        class="px-4 py-1.5 bg-surface-container-high/50 text-on-surface-variant/70 font-label-sm text-label-sm rounded-full border border-outline-variant/20 hover:bg-white cursor-pointer transition-colors">Tell
+                        me a story</span>
+                    <span
+                        class="px-4 py-1.5 bg-surface-container-high/50 text-on-surface-variant/70 font-label-sm text-label-sm rounded-full border border-outline-variant/20 hover:bg-white cursor-pointer transition-colors">Help
+                        me relax</span>
+                </div>
+            </div>
+        </footer>
+        <!-- Decorative Subtle Background Element -->
+        <div
+            class="absolute top-1/4 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none z-0">
+        </div>
+        <div
+            class="absolute bottom-1/4 -left-24 w-96 h-96 bg-secondary/5 rounded-full blur-[100px] pointer-events-none z-0">
+        </div>
+    </main>
+    <script>
+        // Micro-interaction for input focus
+        const chatInput = document.querySelector('input');
+        const inputContainer = chatInput.parentElement;
+
+        chatInput.addEventListener('focus', () => {
+            inputContainer.classList.add('shadow-[0_12px_40px_rgb(217,125,84,0.12)]');
+        });
+
+        chatInput.addEventListener('blur', () => {
+            inputContainer.classList.remove('shadow-[0_12px_40px_rgb(217,125,84,0.12)]');
+        });
+
+        // Simple persona switching simulation
+        const personaItems = document.querySelectorAll('.persona-item');
+        personaItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                personaItems.forEach(i => {
+                    i.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'font-bold');
+                    i.classList.add('text-on-surface-variant');
+                });
+                item.classList.remove('text-on-surface-variant');
+                item.classList.add('bg-secondary-container', 'text-on-secondary-container', 'font-bold');
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+<!-- Mind Mate Chat Interface -->
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mind Mate | A Sanctuary for Mindful Clarity</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@300;400;500&amp;family=Public+Sans:wght@300;400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Noto+Serif:wght@100..900&amp;family=Public+Sans:wght@100..900&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#303031",
+                        "on-secondary-fixed-variant": "#42474b",
+                        "secondary-container": "#dfe3e8",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#4a3f00",
+                        "on-surface-variant": "#434653",
+                        "on-secondary-container": "#606569",
+                        "tertiary": "#6d5e00",
+                        "surface-container-high": "#e9e8e9",
+                        "surface-container-highest": "#e3e2e3",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1b1c1d",
+                        "inverse-primary": "#b1c5ff",
+                        "outline-variant": "#c3c6d5",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001946",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#2259bf",
+                        "secondary-fixed": "#dfe3e8",
+                        "on-primary-fixed-variant": "#00419d",
+                        "on-error": "#ffffff",
+                        "surface-container": "#efedee",
+                        "surface-bright": "#faf9fa",
+                        "on-tertiary-fixed": "#211b00",
+                        "on-background": "#1b1c1d",
+                        "on-primary-container": "#e7ebff",
+                        "surface-variant": "#e3e2e3",
+                        "surface": "#faf9fa",
+                        "inverse-on-surface": "#f2f0f1",
+                        "tertiary-container": "#bfab49",
+                        "surface-container-low": "#f5f3f4",
+                        "primary-fixed": "#d9e2ff",
+                        "background": "#faf9fa",
+                        "secondary": "#5a5f63",
+                        "tertiary-fixed-dim": "#dcc661",
+                        "tertiary-fixed": "#f9e37a",
+                        "primary": "#094cb2",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#3366cc",
+                        "surface-dim": "#dbdadb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b1c5ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#171c20",
+                        "on-tertiary-fixed-variant": "#524600",
+                        "secondary-fixed-dim": "#c2c7cc",
+                        "outline": "#737784"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "display": ["Noto Serif"],
+                        "body": ["Inter"],
+                        "label": ["Public Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf9fa;
+            color: #1b1c1d;
+        }
+
+        .font-headline {
+            font-family: 'Noto Serif', serif;
+        }
+
+        .font-label {
+            font-family: 'Public Sans', sans-serif;
+        }
+
+        .glass-nav {
+            backdrop-filter: blur(20px);
+            background-color: rgba(250, 249, 250, 0.8);
+        }
+
+        .persona-card:hover .persona-overlay {
+            opacity: 1;
+        }
+
+        .scale-98:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <nav class="w-full top-0 sticky z-50 glass-nav">
+        <div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto w-full">
+            <div class="font-headline text-2xl font-bold text-primary dark:text-primary-fixed">Mind Mate</div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary font-label text-sm uppercase tracking-wider"
+                    href="#">Personas</a>
+                <a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors duration-300 font-label text-sm uppercase tracking-wider"
+                    href="#">Stories</a>
+                <a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors duration-300 font-label text-sm uppercase tracking-wider"
+                    href="#">Science</a>
+                <a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors duration-300 font-label text-sm uppercase tracking-wider"
+                    href="#">Library</a>
+            </div>
+            <div class="flex items-center space-x-6">
+                <button
+                    class="text-on-surface-variant font-label text-sm uppercase tracking-wider hover:text-primary transition-colors">Sign
+                    In</button>
+                <button
+                    class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-full font-label text-sm uppercase tracking-wider transition-all scale-98 shadow-sm">Get
+                    Started</button>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <section class="relative min-h-[870px] flex items-center overflow-hidden">
+
+            <div class="max-w-7xl mx-auto px-8 w-full grid md:grid-cols-2 gap-16 items-center relative z-10">
+                <div class="space-y-8">
+                    <span class="font-label text-xs uppercase tracking-[0.2em] text-tertiary font-semibold">An Anthology
+                        of Empathy</span>
+                    <h1 class="font-headline text-5xl md:text-7xl leading-tight text-on-surface">Your thoughts deserve a
+                        <span class="italic text-primary">gentle place</span> to land.
+                    </h1>
+                    <p class="font-body text-lg text-on-surface-variant max-w-xl leading-relaxed">
+                        Mind Mate is a curated therapeutic companion that pairs advanced emotional intelligence with the
+                        timeless wisdom of narrative psychology. Discover clarity through dialogue.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <button
+                            class="bg-primary text-on-primary px-8 py-4 rounded-full font-label text-sm uppercase tracking-widest hover:bg-primary-container transition-all flex items-center gap-2 group">
+                            Begin Your Journey
+                            <span
+                                class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </button>
+                        <button
+                            class="border-b-2 border-transparent hover:border-primary px-4 py-4 font-label text-sm uppercase tracking-widest text-on-surface transition-all">
+                            View Methodology
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="relative w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
+                        <img class="object-cover w-full h-full"
+                            data-alt="A serene, high-end editorial portrait of a person sitting in a sun-drenched library, surrounded by minimalist wooden shelves and lush indoor plants. The lighting is soft and golden, creating a sense of peace and intellectual reflection. The color palette features creamy whites, warm wood tones, and deep navy blue accents, aligning with the Alexandria design system."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKQP2DFHDZHSTPBgjY6YriV9V_rBz8WIZnW7NWpvcmITQSujo53uRLjHjk-x6O9a-muqGEsb_6kUYfYKviYhOzaBPFa02loB97TIfYscB5Bx1CjoXTIRuLx4VTCO73NT2tTs8c17nAMvXp-jdSnxYVWRLhFwzRVY1aQVD2hqkaih640CMZagazaQAntohjSq_mapztXxAxbH7vpgy0a1qG5zR4Gk6rywT2PEz5rdib5I7AHmWAlP75Kc7XiyH7wLFimxh8P-Giq3OY" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-24 bg-surface-container-low">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="mb-20 text-center">
+                    <h2 class="font-headline text-4xl mb-6">Choose Your Voice</h2>
+                    <p class="font-body text-on-surface-variant max-w-2xl mx-auto italic">Every story requires a
+                        different listener. Our AI personas are architected to meet you exactly where your mind resides
+                        today.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div
+                        class="group relative bg-surface-container-lowest p-8 rounded-xl transition-all duration-500 hover:-translate-y-2 persona-card">
+                        <div
+                            class="w-16 h-16 rounded-full bg-primary-fixed mb-6 flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined"
+                                style="font-variation-settings: 'FILL' 1;">spa</span>
+                        </div>
+                        <h3 class="font-headline text-2xl mb-2">Riya</h3>
+                        <p class="font-label text-xs text-tertiary mb-4 uppercase tracking-widest">The Compassionate
+                            Listener</p>
+                        <p class="font-body text-sm text-on-surface-variant leading-relaxed">Soft-spoken and nurturing,
+                            Riya focuses on validation and emotional safety during heavy moments.</p>
+                        <div class="mt-8">
+                            <a class="text-primary font-label text-xs uppercase tracking-widest hover:underline"
+                                href="#">Select Persona</a>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-container-lowest p-8 rounded-xl transition-all duration-500 hover:-translate-y-2 persona-card">
+                        <div
+                            class="w-16 h-16 rounded-full bg-secondary-fixed mb-6 flex items-center justify-center text-on-secondary-fixed-variant">
+                            <span class="material-symbols-outlined"
+                                style="font-variation-settings: 'FILL' 1;">psychology</span>
+                        </div>
+                        <h3 class="font-headline text-2xl mb-2">Arjun</h3>
+                        <p class="font-label text-xs text-tertiary mb-4 uppercase tracking-widest">The Rational
+                            Strategist</p>
+                        <p class="font-body text-sm text-on-surface-variant leading-relaxed">Arjun offers structured
+                            cognitive frameworks to help you deconstruct anxiety and find logical paths forward.</p>
+                        <div class="mt-8">
+                            <a class="text-primary font-label text-xs uppercase tracking-widest hover:underline"
+                                href="#">Select Persona</a>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-container-lowest p-8 rounded-xl transition-all duration-500 hover:-translate-y-2 persona-card">
+                        <div
+                            class="w-16 h-16 rounded-full bg-tertiary-fixed-dim mb-6 flex items-center justify-center text-on-tertiary-fixed">
+                            <span class="material-symbols-outlined"
+                                style="font-variation-settings: 'FILL' 1;">self_improvement</span>
+                        </div>
+                        <h3 class="font-headline text-2xl mb-2">Alex</h3>
+                        <p class="font-label text-xs text-tertiary mb-4 uppercase tracking-widest">The Stoic Mentor</p>
+                        <p class="font-body text-sm text-on-surface-variant leading-relaxed">Grounded in ancient
+                            philosophy, Alex provides a calm perspective on the things within and outside your control.
+                        </p>
+                        <div class="mt-8">
+                            <a class="text-primary font-label text-xs uppercase tracking-widest hover:underline"
+                                href="#">Select Persona</a>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-container-lowest p-8 rounded-xl transition-all duration-500 hover:-translate-y-2 persona-card">
+                        <div
+                            class="w-16 h-16 rounded-full bg-primary-container mb-6 flex items-center justify-center text-on-primary-container">
+                            <span class="material-symbols-outlined"
+                                style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        </div>
+                        <h3 class="font-headline text-2xl mb-2">The Guide</h3>
+                        <p class="font-label text-xs text-tertiary mb-4 uppercase tracking-widest">The Holistic Sage</p>
+                        <p class="font-body text-sm text-on-surface-variant leading-relaxed">A balanced fusion of all
+                            voices, designed for those seeking a broad, integrative approach to mental wellness.</p>
+                        <div class="mt-8">
+                            <a class="text-primary font-label text-xs uppercase tracking-widest hover:underline"
+                                href="#">Select Persona</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-32 bg-surface-container-lowest overflow-hidden">
+            <div class="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-24 items-center">
+                <div class="relative">
+                    <div
+                        class="aspect-square rounded-full bg-surface-container-high scale-110 absolute -z-10 translate-x-12 translate-y-12">
+                    </div>
+                    <div
+                        class="relative z-10 rounded-2xl overflow-hidden shadow-xl transform -rotate-3 hover:rotate-0 transition-transform duration-700">
+                        <img class="object-cover w-full h-[600px]"
+                            data-alt="A sophisticated macro photograph of intricate light patterns reflecting off a calm water surface, creating a dreamy, ethereal texture. The image uses soft cerulean blues, muted gold highlights, and deep indigo shadows. The overall feel is one of scientific precision mixed with artistic beauty, representing the fusion of tech and empathy."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB32yV6VWXJ4wjutZK9X-FJaR1Up05AbLLvE1NO-IiT8zZqDZ7IaxjYv5_KEqh3wsoAzColN8kKXq6omPru5RbS8r_a7v18CNjOw7bSkvVAv14Ir12TZSy0h0vvpODAEI6Sohl2pwAj75CPhIvRjvsKExf9y7hVy1HL53nvcGbdEG98fU69AcZtvfWQE9Yk9vq5cU7c9xq61nX0VBA028mErEGbrorRzMcUMw-z-iWnU_yicU5l67RB8NCA_3reGYKecjg1O5xGUfl2" />
+                    </div>
+                </div>
+                <div class="space-y-10">
+                    <div class="space-y-4">
+                        <span class="font-label text-xs uppercase tracking-widest text-primary font-bold">Research &amp;
+                            Insights</span>
+                        <h2 class="font-headline text-5xl leading-tight">The Science of <br /><span
+                                class="italic">Synthesized Empathy</span></h2>
+                    </div>
+                    <div class="space-y-8 font-body text-on-surface-variant leading-relaxed text-lg">
+                        <p>Our methodology is rooted in the latest advancements in LLM emotional tuning, combined with
+                            decades of peer-reviewed clinical psychology. We don't just process text; we interpret the
+                            cadence of your concern.</p>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-headline text-xl text-on-surface mb-2">Linguistic Mirroring</h4>
+                                <p class="text-sm">Subtle adjustments in tone and pace to match your current emotional
+                                    state.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-headline text-xl text-on-surface mb-2">Ethical Guardrails</h4>
+                                <p class="text-sm">Rigorous safety protocols built into the core architecture of every
+                                    interaction.</p>
+                            </div>
+                        </div>
+                        <p>Unlike traditional AI, Mind Mate is trained on curated datasets of high-quality therapeutic
+                            dialogues, literature, and philosophical texts, ensuring every response carries weight and
+                            wisdom.</p>
+                    </div>
+                    <button
+                        class="font-label text-sm uppercase tracking-widest border-b-2 border-primary text-primary pb-1 hover:text-primary-container transition-colors">
+                        Read the White Paper
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section class="py-24 bg-surface-dim">
+            <div class="max-w-4xl mx-auto px-8 text-center space-y-12">
+                <h2 class="font-headline text-4xl italic">"Mind Mate isn't a replacement for therapy, but it is a
+                    masterclass in providing immediate, high-quality emotional support when the world feels too loud."
+                </h2>
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-px bg-primary mb-6"></div>
+                    <span class="font-label text-xs uppercase tracking-widest">The Journal of Modern Psychology</span>
+                </div>
+            </div>
+        </section>
+        <section class="py-32 bg-primary dark:bg-primary-container text-on-primary">
+            <div class="max-w-7xl mx-auto px-8 flex flex-col items-center text-center space-y-10">
+                <h2 class="font-headline text-5xl md:text-6xl max-w-3xl leading-tight">Begin your next chapter with
+                    clarity.</h2>
+                <p class="font-body text-xl opacity-90 max-w-xl">Join 200,000+ others finding peace in the digital age.
+                    Your first sessions are always on us.</p>
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                    <button
+                        class="bg-surface text-primary px-10 py-5 rounded-full font-label text-sm uppercase tracking-widest hover:bg-surface-bright transition-all shadow-lg scale-98 active:opacity-80">
+                        Download for iOS
+                    </button>
+                    <button
+                        class="bg-transparent border border-on-primary border-opacity-30 text-on-primary px-10 py-5 rounded-full font-label text-sm uppercase tracking-widest hover:bg-on-primary hover:text-primary transition-all scale-98">
+                        Android Early Access
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="bg-surface-container-lowest dark:bg-surface-dim">
+        <div
+            class="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full max-w-7xl mx-auto border-t border-outline-variant/10">
+            <div class="mb-8 md:mb-0 space-y-4">
+                <div class="font-headline text-xl text-on-surface dark:text-on-background">Mind Mate</div>
+                <p class="font-body text-sm text-on-secondary-fixed-variant dark:text-outline-variant max-w-xs">© 2024
+                    Mind Mate. Your path to mindful clarity.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+                <a class="text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary font-label text-xs uppercase transition-colors"
+                    href="#">Privacy Policy</a>
+                <a class="text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary font-label text-xs uppercase transition-colors"
+                    href="#">Terms of Service</a>
+                <a class="text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary font-label text-xs uppercase transition-colors"
+                    href="#">Contact Support</a>
+                <a class="text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary font-label text-xs uppercase transition-colors"
+                    href="#">Our Methodology</a>
+            </div>
+            <div class="mt-8 md:mt-0 flex space-x-6">
+                <a class="text-on-surface hover:text-primary transition-colors" href="#"><span
+                        class="material-symbols-outlined">public</span></a>
+                <a class="text-on-surface hover:text-primary transition-colors" href="#"><span
+                        class="material-symbols-outlined">mail</span></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Simple intersection observer for reveal animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.classList.remove('translate-y-10');
+                    entry.target.classList.add('translate-y-0');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section > div').forEach(el => {
+            el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
+
+<!-- Design System -->
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mind Mate — Profile</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&family=Public+Sans:wght@300;400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Serif:wght@100..900&family=Public+Sans:wght@100..900&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#303031",
+                        "on-secondary-fixed-variant": "#42474b",
+                        "secondary-container": "#dfe3e8",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#4a3f00",
+                        "on-surface-variant": "#434653",
+                        "on-secondary-container": "#606569",
+                        "tertiary": "#6d5e00",
+                        "surface-container-high": "#e9e8e9",
+                        "surface-container-highest": "#e3e2e3",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1b1c1d",
+                        "inverse-primary": "#b1c5ff",
+                        "outline-variant": "#c3c6d5",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001946",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#2259bf",
+                        "secondary-fixed": "#dfe3e8",
+                        "on-primary-fixed-variant": "#00419d",
+                        "on-error": "#ffffff",
+                        "surface-container": "#efedee",
+                        "surface-bright": "#faf9fa",
+                        "on-tertiary-fixed": "#211b00",
+                        "on-background": "#1b1c1d",
+                        "on-primary-container": "#e7ebff",
+                        "surface-variant": "#e3e2e3",
+                        "surface": "#faf9fa",
+                        "inverse-on-surface": "#f2f0f1",
+                        "tertiary-container": "#bfab49",
+                        "surface-container-low": "#f5f3f4",
+                        "primary-fixed": "#d9e2ff",
+                        "background": "#faf9fa",
+                        "secondary": "#5a5f63",
+                        "tertiary-fixed-dim": "#dcc661",
+                        "tertiary-fixed": "#f9e37a",
+                        "primary": "#094cb2",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#3366cc",
+                        "surface-dim": "#dbdadb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b1c5ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#171c20",
+                        "on-tertiary-fixed-variant": "#524600",
+                        "secondary-fixed-dim": "#c2c7cc",
+                        "outline": "#737784"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "display": ["Noto Serif"],
+                        "body": ["Inter"],
+                        "label": ["Public Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-item-active {
+            position: relative;
+        }
+
+        .nav-item-active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #094cb2;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <!-- TopNavBar -->
+    <header class="w-full top-0 sticky z-50 bg-surface-container-low transition-colors duration-300">
+        <div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto w-full">
+            <div class="font-headline text-2xl font-bold text-primary">Mind Mate</div>
+            <nav class="hidden md:flex items-center space-x-10">
+                <a class="font-label text-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Personas</a>
+                <a class="font-label text-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Stories</a>
+                <a class="font-label text-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Science</a>
+                <a class="font-label text-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Library</a>
+            </nav>
+            <div class="flex items-center space-x-6">
+                <button
+                    class="font-label text-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors">Sign
+                    In</button>
+                <button
+                    class="bg-primary text-on-primary px-5 py-2 rounded-lg font-label text-sm uppercase tracking-wider font-bold transition-transform active:scale-95 shadow-sm">Get
+                    Started</button>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow w-full max-w-7xl mx-auto px-8 py-12">
+        <!-- Profile Header Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-20">
+            <div class="lg:col-span-4">
+                <div
+                    class="aspect-square w-full max-w-[320px] rounded-xl overflow-hidden shadow-2xl transition-transform hover:scale-[1.02] duration-500">
+                    <img class="w-full h-full object-cover"
+                        data-alt="A sophisticated editorial-style portrait of a serene woman in her late 20s with a thoughtful expression. She is captured in soft, natural window lighting against a minimalist, high-end gallery background. The aesthetic is modern and scholarly, emphasizing intellectual clarity and emotional balance. The color palette is dominated by neutral tones, soft whites, and a touch of deep blue to match the Mind Mate brand identity."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8GDztP_8XQsKdTaGxdfjt3myFb90k1uYzUSAkc2o042JUZpYtWbS8nwJJLRCgyasEiZ9Nm43W4oFb-x8UsVT8_T8lu6oh1MQA_oesmONitoEK5a5sa7ehSC-embZwps-XnI1Ex_jfOz-S7u40yRcZpXmFELJfiZtRAP2qddkmzN2SKDuF9NSzbgHSUWm5UjOXx_MG7Op5B8DGRKzNn0S_Px84WH1IjRpRCDqHHaftzxmIgmKPRS_b8F_hDaGmBOo39PnYTw3SZPM5" />
+                </div>
+            </div>
+            <div class="lg:col-span-8">
+                <div class="flex items-center gap-4 mb-4">
+                    <span
+                        class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full font-label text-xs uppercase tracking-widest font-bold">Curator
+                        Tier</span>
+                    <span class="text-outline font-label text-xs uppercase tracking-widest">Joined October 2023</span>
+                </div>
+                <h1 class="font-display text-5xl md:text-7xl mb-6 text-on-surface leading-tight">Elena Valerius</h1>
+                <p class="font-body text-xl text-on-surface-variant max-w-2xl leading-relaxed italic">
+                    "Seeking the intersection of cognitive science and narrative therapy. Currently exploring the Stoic
+                    Persona to balance high-pressure creative work with intentional stillness."
+                </p>
+                <div class="flex gap-8 mt-10">
+                    <div>
+                        <div class="font-display text-3xl text-primary font-bold">142</div>
+                        <div class="font-label text-xs uppercase tracking-widest text-outline">Mindful Hours</div>
+                    </div>
+                    <div class="border-l border-outline-variant opacity-30"></div>
+                    <div>
+                        <div class="font-display text-3xl text-primary font-bold">12</div>
+                        <div class="font-label text-xs uppercase tracking-widest text-outline">Personas Mastered</div>
+                    </div>
+                    <div class="border-l border-outline-variant opacity-30"></div>
+                    <div>
+                        <div class="font-display text-3xl text-primary font-bold">48</div>
+                        <div class="font-label text-xs uppercase tracking-widest text-outline">Stories Shared</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Bento Grid: Journey & Stats -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+            <!-- Active Persona Card -->
+            <div
+                class="md:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between group transition-all hover:bg-surface-container-high duration-300">
+                <div class="flex justify-between items-start mb-12">
+                    <div>
+                        <h3 class="font-label text-xs uppercase tracking-widest text-tertiary font-bold mb-2">Current
+                            Active Persona</h3>
+                        <h2 class="font-display text-4xl text-on-surface">The Stoic Architect</h2>
+                    </div>
+                    <div
+                        class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+                        <span class="material-symbols-outlined text-3xl">architecture</span>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-end">
+                        <span class="font-label text-xs uppercase text-on-surface-variant">Progression towards
+                            Clarity</span>
+                        <span class="font-display text-lg text-primary">82%</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-outline-variant/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary transition-all duration-1000 ease-out" style="width: 82%"></div>
+                    </div>
+                </div>
+                <div class="mt-10 flex gap-4">
+                    <button
+                        class="bg-primary text-on-primary px-6 py-3 rounded-lg font-label text-sm uppercase font-bold tracking-wider hover:opacity-90 transition-opacity">Resume
+                        Session</button>
+                    <button
+                        class="text-primary font-label text-sm uppercase font-bold tracking-wider hover:underline px-6 py-3">View
+                        Syllabus</button>
+                </div>
+            </div>
+            <!-- Activity Heatmap Mockup -->
+            <div class="bg-surface-container-low rounded-xl p-8 flex flex-col">
+                <h3 class="font-label text-xs uppercase tracking-widest text-outline font-bold mb-6">Consistency Ritual
+                </h3>
+                <div class="flex-grow flex items-center justify-center">
+                    <div class="grid grid-cols-7 gap-2 w-full">
+                        <!-- Simulated heat map squares -->
+                        <script>
+                            const colors = ['bg-outline-variant/10', 'bg-primary/20', 'bg-primary/40', 'bg-primary/60', 'bg-primary'];
+                            for (let i = 0; i < 35; i++) {
+                                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                                document.write(`<div class="aspect-square rounded-sm ${randomColor}"></div>`);
+                            }
+                        </script>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-between text-[10px] uppercase font-label text-outline tracking-tighter">
+                    <span>Oct 2023</span>
+                    <span>Current Streak: 12 Days</span>
+                </div>
+            </div>
+            <!-- Privacy Card -->
+            <div class="bg-surface-dim rounded-xl p-8 flex flex-col justify-between">
+                <div>
+                    <h3 class="font-label text-xs uppercase tracking-widest text-on-surface font-bold mb-4">Mind Shield
+                    </h3>
+                    <p class="font-body text-sm text-on-surface-variant leading-relaxed">Your emotional data is
+                        encrypted using zero-knowledge protocols. You are in total control.</p>
+                </div>
+                <div class="mt-8 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-label text-on-surface">Stealth Mode</span>
+                        <div class="w-10 h-5 bg-primary rounded-full relative cursor-pointer">
+                            <div class="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-label text-on-surface">Data Portability</span>
+                        <span
+                            class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">download</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Notifications Card -->
+            <div class="bg-surface-container-low rounded-xl p-8 md:col-span-2">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-label text-xs uppercase tracking-widest text-outline font-bold">Insight Delivery
+                    </h3>
+                    <span class="material-symbols-outlined text-outline cursor-pointer">settings</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-start">
+                            <div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-primary">mail</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold font-label">Weekly Clarity Report</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Deep dives into your cognitive patterns
+                                    delivered every Sunday.</p>
+                            </div>
+                            <input checked=""
+                                class="rounded border-outline-variant text-primary focus:ring-primary h-5 w-5 ml-auto"
+                                type="checkbox" />
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-primary">notifications_active</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold font-label">Persona Nudges</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Gentle reminders to inhabit your chosen
+                                    persona during the day.</p>
+                            </div>
+                            <input
+                                class="rounded border-outline-variant text-primary focus:ring-primary h-5 w-5 ml-auto"
+                                type="checkbox" />
+                        </div>
+                    </div>
+                    <div class="bg-white/40 p-6 rounded-lg border border-outline-variant/10">
+                        <h4 class="text-xs uppercase font-label tracking-widest font-bold mb-4">Focus Hours</h4>
+                        <div class="flex justify-between items-center text-sm font-label mb-2">
+                            <span>From</span>
+                            <span class="font-bold">08:00 AM</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm font-label">
+                            <span>To</span>
+                            <span class="font-bold">06:00 PM</span>
+                        </div>
+                        <p class="text-[10px] text-outline italic mt-4">Notifications are automatically muted outside
+                            these hours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Persona History Section -->
+        <section class="mb-20">
+            <div class="flex justify-between items-end mb-10 border-b border-outline-variant pb-6">
+                <h2 class="font-display text-3xl">Persona Archives</h2>
+                <a class="font-label text-xs uppercase font-bold text-primary tracking-widest hover:underline transition-all"
+                    href="#">Explore Entire Library</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="group relative overflow-hidden rounded-lg aspect-[3/4] cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-t from-on-surface/90 to-transparent z-10"></div>
+                    <img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        data-alt="A macro photograph of an ancient, weathered marble statue of a philosopher. The lighting is dramatic and shadowy, highlighting the textures of the stone. The style is that of a premium museum catalog, with a sense of timeless wisdom. Deep shadows and stark highlights emphasize the contours of the face, representing 'The Ancient Sage' persona."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI_4cEEqSe9s4sPagwCqwDlqoSxLWe2LlNeKrqsudfXRluUJUFWXcw9agBDUMJ-YKEJ98wqQeMNnI12WlQ4F-Bu19L00kUQlDnC8eNotJnX4-cPUM6aB783zxvfOZERHiNtIa9HjtXynkoTK5NVp10rtcWP2ZQMfpz9ndYGoCVEzVYQIxJ8D5-IacmzzeFdFkEvCTjRQaXVWc9pnG3QDnaNsWBx_Jrfs4mZEEDVLwBSM46J7iqQrMhOvz5898fdR6u1m3dBPQgHEGE" />
+                    <div class="absolute bottom-0 left-0 p-6 z-20">
+                        <span
+                            class="font-label text-[10px] uppercase text-primary-fixed font-bold tracking-widest">Mastered</span>
+                        <h4 class="font-display text-xl text-white">The Sage</h4>
+                    </div>
+                </div>
+                <div class="group relative overflow-hidden rounded-lg aspect-[3/4] cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-t from-on-surface/90 to-transparent z-10"></div>
+                    <img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        data-alt="A clean, minimalist workspace featuring a high-end mechanical watch, a fountain pen, and a blank notebook on a white oak desk. The photography is crisp and modern, with a cool-toned editorial aesthetic. This represents 'The High-Performance Analyst' persona, focusing on precision, order, and focused energy."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3ugBK9K9ahEyjBJjHgdP9lF5sugrQNgE4C5OVb0Y3FuaCJRfoG_TC0v7r420HjT2gvipUBbVYheFlrUC2z2RalHCtsCEtY8PZOOD8eSP21Ql6i9Utwv9pfuOV56Rv8uuFRY66pdvWdTEfr3bbV8OAC41HtpD6XuMu7SEr7TUdlJnHXiXCEPeU2zX15tItykKaXQMt7cFfBr9ORh9eziC6xTOK6CN6SUyhASKIgP7Xj6pALJqxZYyi20UPRALYgtq6gtN68z_wHIJk" />
+                    <div class="absolute bottom-0 left-0 p-6 z-20">
+                        <span
+                            class="font-label text-[10px] uppercase text-primary-fixed font-bold tracking-widest">Mastered</span>
+                        <h4 class="font-display text-xl text-white">The Analyst</h4>
+                    </div>
+                </div>
+                <div class="group relative overflow-hidden rounded-lg aspect-[3/4] cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-t from-on-surface/90 to-transparent z-10"></div>
+                    <img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        data-alt="An ethereal, soft-focus image of a lush forest clearing at dawn, with beams of light filtering through a light morning mist. The colors are soft greens, gold, and pale blue. The mood is tranquil and revitalizing, representing 'The Rejuvenated Naturalist' persona. The visual style is light-mode, airy, and deeply calming."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA26opwo0ZDP4aYEQvgJgAfr2B-8CDC2yx0m4VIsyPJiz-Hw3IFsMk2QEoWYwTHkCTI1gW_-DSOVCL01baNXT8CovtyyeynPwMSGdchvayWUkIDz3HWXKbSuih9acmYgmzXFWmX0abPBIGB7dPMZpDE98Nf88RnsDgmq3Xq7JFxyxU8PKc9UPq8g4sc-op7UL1EvdzSqojoa8r7Fzj0eHqu8KN6WbhLbgvp5PErJhAPQQEuMy5zM8Kak5co2sn__jmFB60mn5SmJ2DX" />
+                    <div class="absolute bottom-0 left-0 p-6 z-20">
+                        <span class="font-label text-[10px] uppercase text-primary-fixed font-bold tracking-widest">94%
+                            Progress</span>
+                        <h4 class="font-display text-xl text-white">The Wanderer</h4>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-container flex flex-col items-center justify-center p-8 rounded-lg border border-dashed border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-4xl text-outline-variant mb-4">add_circle</span>
+                    <span class="font-label text-xs uppercase tracking-widest font-bold text-outline">Adopt New
+                        Persona</span>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer class="w-full mt-auto bg-surface-container-lowest transition-colors duration-300">
+        <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full max-w-7xl mx-auto">
+            <div class="flex flex-col items-center md:items-start mb-8 md:mb-0">
+                <div class="font-headline text-xl text-on-surface mb-2">Mind Mate</div>
+                <p class="font-body text-sm text-on-secondary-fixed-variant">© 2024 Mind Mate. Your path to mindful
+                    clarity.</p>
+            </div>
+            <nav class="flex flex-wrap justify-center gap-8">
+                <a class="font-label text-xs uppercase tracking-widest text-on-secondary-fixed-variant hover:text-primary transition-colors"
+                    href="#">Privacy Policy</a>
+                <a class="font-label text-xs uppercase tracking-widest text-on-secondary-fixed-variant hover:text-primary transition-colors"
+                    href="#">Terms of Service</a>
+                <a class="font-label text-xs uppercase tracking-widest text-on-secondary-fixed-variant hover:text-primary transition-colors"
+                    href="#">Contact Support</a>
+                <a class="font-label text-xs uppercase tracking-widest text-on-secondary-fixed-variant hover:text-primary transition-colors"
+                    href="#">Our Methodology</a>
+            </nav>
+        </div>
+    </footer>
+    <script>
+        // Simple micro-interaction for persona hover effects
+        document.querySelectorAll('.aspect-\\[3\\/4\\]').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.querySelector('img').style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.querySelector('img').style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+<!-- Mind Mate | Your Digital Sanctuary -->
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mind Mate - Sign In</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@400;500;600&amp;family=Public+Sans:wght@300;400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Noto+Serif:wght@100..900&amp;family=Public+Sans:wght@100..900&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#303031",
+                        "on-secondary-fixed-variant": "#42474b",
+                        "secondary-container": "#dfe3e8",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#4a3f00",
+                        "on-surface-variant": "#434653",
+                        "on-secondary-container": "#606569",
+                        "tertiary": "#6d5e00",
+                        "surface-container-high": "#e9e8e9",
+                        "surface-container-highest": "#e3e2e3",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1b1c1d",
+                        "inverse-primary": "#b1c5ff",
+                        "outline-variant": "#c3c6d5",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001946",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#2259bf",
+                        "secondary-fixed": "#dfe3e8",
+                        "on-primary-fixed-variant": "#00419d",
+                        "on-error": "#ffffff",
+                        "surface-container": "#efedee",
+                        "surface-bright": "#faf9fa",
+                        "on-tertiary-fixed": "#211b00",
+                        "on-background": "#1b1c1d",
+                        "on-primary-container": "#e7ebff",
+                        "surface-variant": "#e3e2e3",
+                        "surface": "#faf9fa",
+                        "inverse-on-surface": "#f2f0f1",
+                        "tertiary-container": "#bfab49",
+                        "surface-container-low": "#f5f3f4",
+                        "primary-fixed": "#d9e2ff",
+                        "background": "#faf9fa",
+                        "secondary": "#5a5f63",
+                        "tertiary-fixed-dim": "#dcc661",
+                        "tertiary-fixed": "#f9e37a",
+                        "primary": "#094cb2",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#3366cc",
+                        "surface-dim": "#dbdadb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#b1c5ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#171c20",
+                        "on-tertiary-fixed-variant": "#524600",
+                        "secondary-fixed-dim": "#c2c7cc",
+                        "outline": "#737784"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "display": ["Noto Serif"],
+                        "body": ["Inter"],
+                        "label": ["Public Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        .modal-shadow {
+            box-shadow: 0 24px 48px -12px rgba(27, 28, 29, 0.08);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background text-on-background font-body selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
+    <!-- Landing Page Background (Simulated) -->
+    <header class="w-full top-0 sticky bg-surface dark:bg-background z-40 transition-colors duration-300">
+        <nav class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto w-full">
+            <div class="font-headline text-2xl font-bold text-primary dark:text-primary-fixed">Mind Mate</div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a class="text-on-surface-variant dark:text-outline-variant hover:text-primary font-label text-sm uppercase tracking-wider transition-colors"
+                    href="#">Personas</a>
+                <a class="text-on-surface-variant dark:text-outline-variant hover:text-primary font-label text-sm uppercase tracking-wider transition-colors"
+                    href="#">Stories</a>
+                <a class="text-on-surface-variant dark:text-outline-variant hover:text-primary font-label text-sm uppercase tracking-wider transition-colors"
+                    href="#">Science</a>
+                <a class="text-on-surface-variant dark:text-outline-variant hover:text-primary font-label text-sm uppercase tracking-wider transition-colors"
+                    href="#">Library</a>
+            </div>
+            <div class="flex items-center gap-6">
+                <button
+                    class="text-primary font-label text-sm uppercase tracking-wider font-semibold hover:opacity-80 transition-opacity"
+                    onclick="openModal('signIn')">Sign In</button>
+                <button
+                    class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-full font-label text-sm uppercase tracking-wider shadow-sm transition-all active:scale-95"
+                    onclick="openModal('signUp')">Get Started</button>
+            </div>
+        </nav>
+    </header>
+    <main class="relative min-h-[921px] flex flex-col items-center justify-center px-6 py-20 text-center">
+        <!-- Background element -->
+        <div class="absolute inset-0 -z-10 overflow-hidden">
+
+        </div>
+        <h1 class="font-headline text-5xl md:text-7xl max-w-4xl leading-tight mb-8">Nurture your narrative with <span
+                class="text-primary italic">scientific</span> clarity.</h1>
+        <p class="font-body text-xl text-on-surface-variant max-w-2xl mb-12">Join thousands of thinkers who use Mind
+            Mate to map their cognitive landscapes through premium, scholarly curation.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full mt-20">
+            <div
+                class="bg-surface-container-low p-10 rounded-xl text-left hover:bg-surface-container transition-colors group">
+                <span class="material-symbols-outlined text-4xl text-tertiary mb-6">psychology</span>
+                <h3 class="font-headline text-2xl mb-4">Deep Personalization</h3>
+                <p class="text-on-surface-variant leading-relaxed">Our algorithms respect your unique mental
+                    architecture, providing insights that evolve as you do.</p>
+            </div>
+            <div
+                class="bg-surface-container-low p-10 rounded-xl text-left hover:bg-surface-container transition-colors group">
+                <span class="material-symbols-outlined text-4xl text-tertiary mb-6">menu_book</span>
+                <h3 class="font-headline text-2xl mb-4">Scholarly Library</h3>
+                <p class="text-on-surface-variant leading-relaxed">Access a vast archive of curated mental models,
+                    philosophy, and neuroscience simplified for growth.</p>
+            </div>
+            <div
+                class="bg-surface-container-low p-10 rounded-xl text-left hover:bg-surface-container transition-colors group">
+                <span class="material-symbols-outlined text-4xl text-tertiary mb-6">verified_user</span>
+                <h3 class="font-headline text-2xl mb-4">Ethical Privacy</h3>
+                <p class="text-on-surface-variant leading-relaxed">Your data remains yours. We prioritize absolute
+                    transparency and local-first encryption methods.</p>
+            </div>
+        </div>
+    </main>
+    <!-- Modal Overlay -->
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/30 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300"
+        id="modalOverlay">
+        <!-- Sign In Modal -->
+        <div class="glass-panel w-full max-w-md rounded-2xl modal-shadow overflow-hidden hidden transform translate-y-4 transition-all duration-500"
+            id="signInModal">
+            <div class="p-8 md:p-12">
+                <div class="flex justify-between items-start mb-10">
+                    <div class="font-headline text-2xl text-primary font-bold">Mind Mate</div>
+                    <button class="text-outline hover:text-on-surface transition-colors" onclick="closeModal()">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="mb-8">
+                    <h2 class="font-headline text-3xl mb-2">Welcome Back</h2>
+                    <p class="font-body text-on-surface-variant">Access your curated mental archive.</p>
+                </div>
+                <div class="space-y-4 mb-8">
+                    <button
+                        class="w-full flex items-center justify-center gap-3 bg-surface-container-highest hover:bg-outline-variant/30 py-3 rounded-full transition-colors font-label text-sm uppercase tracking-wide">
+                        <img class="w-5 h-5"
+                            data-alt="A clean vector icon of the Google 'G' logo, colorful and professional, centered on a pristine white background. High-quality digital rendering in a minimalist style suitable for a premium tech brand interface."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQr1jT9qQKYg2ZjNfkr5X5PXFIbbugDdGn1UDI_OQ4piiqjUMRosikWaJZLeGyiqCg0ljQUtNo4ImmKtRKiBDUBcvPAalTBICT-YRjI_d-d1Krep61TdBo5HC45kY8PdW5GlJW7XLXjhDW6AqpRYZRmFhMaUwlvniAQ_-XQXmXbxFNRnehfsQ2iAkSHVtcJzcx3YBGehb4mfBuYQCPJobU1vtluujhgu_M88yOA8sygNdOj7nuH2sxdSs2YmW0FXHDhpA7S3DONm0a" />
+                        Continue with Google
+                    </button>
+                    <button
+                        class="w-full flex items-center justify-center gap-3 bg-surface-container-highest hover:bg-outline-variant/30 py-3 rounded-full transition-colors font-label text-sm uppercase tracking-wide">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">apps</span>
+                        Continue with Apple
+                    </button>
+                </div>
+                <div class="relative mb-8 text-center">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-outline-variant/30"></div>
+                    </div>
+                    <span class="relative bg-white px-4 text-xs font-label uppercase tracking-widest text-outline">or
+                        email</span>
+                </div>
+                <form class="space-y-5" onsubmit="event.preventDefault()">
+                    <div class="space-y-1">
+                        <label class="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">Email
+                            Address</label>
+                        <input
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"
+                            placeholder="name@example.com" type="email" />
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <label
+                                class="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">Password</label>
+                            <a class="text-xs text-primary hover:underline font-label uppercase tracking-widest"
+                                href="#">Forgot?</a>
+                        </div>
+                        <input
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"
+                            placeholder="••••••••" type="password" />
+                    </div>
+                    <button
+                        class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-lg shadow-primary/10 hover:opacity-90 transition-all active:scale-95 mt-4">
+                        Sign In
+                    </button>
+                </form>
+                <p class="text-center mt-10 text-on-surface-variant text-sm font-body">
+                    New to Mind Mate?
+                    <button class="text-primary font-bold hover:underline" onclick="toggleModal('signUp')">Create an
+                        account</button>
+                </p>
+            </div>
+        </div>
+        <!-- Sign Up Modal -->
+        <div class="glass-panel w-full max-w-md rounded-2xl modal-shadow overflow-hidden hidden transform translate-y-4 transition-all duration-500"
+            id="signUpModal">
+            <div class="p-8 md:p-12">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="font-headline text-2xl text-primary font-bold">Mind Mate</div>
+                    <button class="text-outline hover:text-on-surface transition-colors" onclick="closeModal()">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="mb-8">
+                    <h2 class="font-headline text-3xl mb-2">Begin Your Journey</h2>
+                    <p class="font-body text-on-surface-variant">Step into a world of mindful clarity.</p>
+                </div>
+                <div class="space-y-4 mb-8">
+                    <button
+                        class="w-full flex items-center justify-center gap-3 bg-surface-container-highest hover:bg-outline-variant/30 py-3 rounded-full transition-colors font-label text-sm uppercase tracking-wide">
+                        <img class="w-5 h-5"
+                            data-alt="Minimalist Google logo icon on a white background, crisp vector design with vibrant primary colors. The image reflects a high-end digital aesthetic with soft edges and professional finish."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTXfoRI5SpLbajV-Q8rW-FYtpbxyk3YJ6N5RdIwHDLn3veVwo_dJQHIUxb0QNbP6ZcBQNeaKa1j6LJ5qW-EThP9C60mNTqJMtlLWe1e_ip2WiL0sG0waZMOihW747K-wkH0BI7Qaw3hCbiNzi4a3mz1-Ga235Md4YcUYufkmMdi0IXdVJWnHJ3DPWlXhiQD95KHEGHFNVJnXnQyKbe-xhUCQqBaoX5GaQ1-Abw9uOb9PX2Ch4Eo0nYoaCaM_i7gsGyxYpwv-Swnpeh" />
+                        Sign up with Google
+                    </button>
+                </div>
+                <div class="relative mb-8 text-center">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-outline-variant/30"></div>
+                    </div>
+                    <span class="relative bg-white px-4 text-xs font-label uppercase tracking-widest text-outline">or
+                        personal email</span>
+                </div>
+                <form class="space-y-4" onsubmit="event.preventDefault()">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label
+                                class="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">First
+                                Name</label>
+                            <input
+                                class="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+                                placeholder="Alex" type="text" />
+                        </div>
+                        <div class="space-y-1">
+                            <label
+                                class="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">Last
+                                Name</label>
+                            <input
+                                class="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+                                placeholder="Reed" type="text" />
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label
+                            class="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">Email</label>
+                        <input
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+                            placeholder="name@example.com" type="email" />
+                    </div>
+                    <div class="space-y-1">
+                        <label
+                            class="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">Password</label>
+                        <input
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+                            placeholder="At least 8 characters" type="password" />
+                    </div>
+                    <div class="flex items-start gap-3 mt-2">
+                        <input class="mt-1 rounded border-outline-variant/50 text-primary focus:ring-primary"
+                            type="checkbox" />
+                        <p class="text-xs text-on-surface-variant font-body leading-relaxed">
+                            I agree to the <a class="text-primary underline" href="#">Terms</a> and have read the <a
+                                class="text-primary underline" href="#">Privacy Policy</a>.
+                        </p>
+                    </div>
+                    <button
+                        class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-lg shadow-primary/10 hover:opacity-90 transition-all active:scale-95 mt-4">
+                        Create Account
+                    </button>
+                </form>
+                <p class="text-center mt-8 text-on-surface-variant text-sm font-body">
+                    Already have an account?
+                    <button class="text-primary font-bold hover:underline" onclick="toggleModal('signIn')">Sign
+                        In</button>
+                </p>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-surface-container-lowest dark:bg-surface-dim mt-auto w-full">
+        <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full max-w-7xl mx-auto">
+            <div class="mb-8 md:mb-0">
+                <div class="font-headline text-xl text-on-surface dark:text-on-background font-bold mb-2">Mind Mate
+                </div>
+                <p class="font-body text-sm text-on-secondary-fixed-variant dark:text-outline-variant max-w-xs">© 2024
+                    Mind Mate. Your path to mindful clarity.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8">
+                <a class="font-label text-xs uppercase text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary transition-colors"
+                    href="#">Privacy Policy</a>
+                <a class="font-label text-xs uppercase text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary transition-colors"
+                    href="#">Terms of Service</a>
+                <a class="font-label text-xs uppercase text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary transition-colors"
+                    href="#">Contact Support</a>
+                <a class="font-label text-xs uppercase text-on-secondary-fixed-variant dark:text-outline-variant hover:text-primary transition-colors"
+                    href="#">Our Methodology</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        const overlay = document.getElementById('modalOverlay');
+        const signInModal = document.getElementById('signInModal');
+        const signUpModal = document.getElementById('signUpModal');
+
+        function openModal(type) {
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            document.body.style.overflow = 'hidden';
+
+            if (type === 'signIn') {
+                signInModal.classList.remove('hidden');
+                setTimeout(() => signInModal.classList.add('translate-y-0', 'opacity-100'), 50);
+            } else {
+                signUpModal.classList.remove('hidden');
+                setTimeout(() => signUpModal.classList.add('translate-y-0', 'opacity-100'), 50);
+            }
+        }
+
+        function closeModal() {
+            signInModal.classList.add('translate-y-4', 'opacity-0');
+            signUpModal.classList.add('translate-y-4', 'opacity-0');
+            overlay.classList.remove('opacity-100');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                signInModal.classList.add('hidden');
+                signUpModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        function toggleModal(to) {
+            signInModal.classList.add('translate-y-4', 'opacity-0');
+            signUpModal.classList.add('translate-y-4', 'opacity-0');
+
+            setTimeout(() => {
+                signInModal.classList.add('hidden');
+                signUpModal.classList.add('hidden');
+
+                if (to === 'signIn') {
+                    signInModal.classList.remove('hidden');
+                    setTimeout(() => signInModal.classList.remove('translate-y-4', 'opacity-0'), 50);
+                } else {
+                    signUpModal.classList.remove('hidden');
+                    setTimeout(() => signUpModal.classList.remove('translate-y-4', 'opacity-0'), 50);
+                }
+            }, 250);
+        }
+
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Close on overlay click
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeModal();
+        });
+    </script>
+</body>
+
+</html>
