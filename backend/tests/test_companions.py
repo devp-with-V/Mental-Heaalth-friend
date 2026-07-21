@@ -42,15 +42,12 @@ class TestPersonaSeedData:
         display_names = [p["display_name"] for p in PERSONAS]
         assert "Mia" not in display_names
 
-    def test_guide_is_gender_adaptive(self):
-        guide = next(p for p in PERSONAS if p["slug"] == "guide")
-        assert guide["is_gender_adaptive"] is True
-
-    def test_non_guide_not_gender_adaptive(self):
+    def test_no_persona_is_gender_adaptive(self):
+        # Gender adaptation was intentionally dropped in the persona redesign —
+        # no persona (including The Guide) adapts to the user's gender anymore.
         for persona in PERSONAS:
-            if persona["slug"] != "guide":
-                assert persona.get("is_gender_adaptive", False) is False, \
-                    f"'{persona['slug']}' should not be gender_adaptive"
+            assert persona.get("is_gender_adaptive", False) is False, \
+                f"'{persona['slug']}' should not be gender_adaptive"
 
     def test_all_have_example_responses(self):
         for persona in PERSONAS:
@@ -95,12 +92,13 @@ class TestCompanionListEndpoint:
             db.add(p)
         db.flush()  # Make visible within this transaction (no commit needed for same session)
 
-        resp = client.get("/companions/")
+        resp = client.get("/api/companions/")
         assert resp.status_code == 200
         result = resp.json()
-        assert len(result) == 4
+        # All seeded personas are returned (riya, arjun, alex, guide, squad, ...).
+        assert len(result) == len(PERSONAS)
         slugs = {c["slug"] for c in result}
-        assert slugs == {"riya", "arjun", "alex", "guide"}
+        assert {"riya", "arjun", "alex", "guide"}.issubset(slugs)
 
     def test_list_companions_no_auth_required(self, client, db):
         """Companion list is public — should work without a token."""
@@ -111,7 +109,7 @@ class TestCompanionListEndpoint:
             db.add(p)
         db.flush()
 
-        resp = client.get("/companions/")
+        resp = client.get("/api/companions/")
         assert resp.status_code == 200
 
     def test_companions_have_expected_fields(self, client, db):
@@ -122,7 +120,7 @@ class TestCompanionListEndpoint:
             db.add(p)
         db.flush()
 
-        resp = client.get("/companions/")
+        resp = client.get("/api/companions/")
         for companion in resp.json():
             assert "slug" in companion
             assert "display_name" in companion
@@ -138,7 +136,7 @@ class TestCompanionListEndpoint:
             db.add(p)
         db.flush()
 
-        resp = client.get("/companions/")
+        resp = client.get("/api/companions/")
         orders = [c["sort_order"] for c in resp.json()]
         assert orders == sorted(orders)
 
@@ -154,26 +152,27 @@ class TestCompanionDetailEndpoint:
 
     def test_get_riya_by_slug(self, client, db):
         self._seed(db)
-        resp = client.get("/companions/riya")
+        resp = client.get("/api/companions/riya")
         assert resp.status_code == 200
         data = resp.json()
         assert data["slug"] == "riya"
         assert data["display_name"] == "Riya"
 
-    def test_get_guide_is_gender_adaptive(self, client, db):
+    def test_get_guide_not_gender_adaptive(self, client, db):
+        # Gender adaptation was intentionally dropped — The Guide no longer adapts.
         self._seed(db)
-        resp = client.get("/companions/guide")
+        resp = client.get("/api/companions/guide")
         assert resp.status_code == 200
-        assert resp.json()["is_gender_adaptive"] is True
+        assert resp.json()["is_gender_adaptive"] is False
 
     def test_invalid_slug_returns_404(self, client, db):
         self._seed(db)
-        resp = client.get("/companions/mia")  # Old name — should not exist
+        resp = client.get("/api/companions/mia")  # Old name — should not exist
         assert resp.status_code == 404
 
     def test_another_old_name_returns_404(self, client, db):
         self._seed(db)
-        resp = client.get("/companions/coach")  # From old plan — not in Phase 1
+        resp = client.get("/api/companions/coach")  # From old plan — not in Phase 1
         assert resp.status_code == 404
 
 
@@ -188,12 +187,12 @@ class TestCompanionConversationsEndpoint:
 
     def test_requires_auth(self, client, db):
         self._seed(db)
-        resp = client.get("/companions/riya/conversations")
+        resp = client.get("/api/companions/riya/conversations")
         assert resp.status_code == 401
 
     def test_returns_empty_for_new_user(self, client, db, auth_headers):
         self._seed(db)
-        resp = client.get("/companions/riya/conversations", headers=auth_headers)
+        resp = client.get("/api/companions/riya/conversations", headers=auth_headers)
         assert resp.status_code == 200
         assert resp.json() == []
 
@@ -228,23 +227,19 @@ class TestPromptBuilderPersonaInjection:
         prompt = build_system_prompt(self._make_user(), [], "Hello", persona=persona)
         assert "Arjun" in prompt
 
-    def test_guide_gets_gender_line_for_male(self, db):
+    def test_guide_prompt_is_gender_independent(self, db):
+        # Gender adaptation was intentionally dropped: The Guide's system prompt
+        # must be identical regardless of the user's gender.
         from services.personas import seed_personas
         seed_personas(db)
 
         persona = get_persona_by_slug("guide", db)
-        user = self._make_user(gender="male")
-        prompt = build_system_prompt(user, [], "Hello", persona=persona)
-        assert "male" in prompt.lower() or "brother" in prompt.lower()
-
-    def test_guide_gets_gender_line_for_female(self, db):
-        from services.personas import seed_personas
-        seed_personas(db)
-
-        persona = get_persona_by_slug("guide", db)
-        user = self._make_user(gender="female")
-        prompt = build_system_prompt(user, [], "Hello", persona=persona)
-        assert "female" in prompt.lower() or "sister" in prompt.lower()
+        male_prompt = build_system_prompt(self._make_user(gender="male"), [], "Hello", persona=persona)
+        female_prompt = build_system_prompt(self._make_user(gender="female"), [], "Hello", persona=persona)
+        neutral_prompt = build_system_prompt(
+            self._make_user(gender="prefer_not_to_say"), [], "Hello", persona=persona
+        )
+        assert male_prompt == female_prompt == neutral_prompt
 
     def test_no_persona_falls_back_to_riya_defaults(self, db):
         """When persona=None, the prompt builder uses the inline Riya defaults."""

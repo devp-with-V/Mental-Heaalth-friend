@@ -49,7 +49,7 @@ class TestRateLimitEnforcement:
              patch("services.openrouter.chat_completion", new=AsyncMock(return_value="Hi there!")):
             mock_redis.incr.return_value = 1
             mock_redis.expire.return_value = True
-            resp = client.post("/chat/send",
+            resp = client.post("/api/chat/send",
                 json={"content": "hello"},
                 headers=auth_headers
             )
@@ -60,7 +60,7 @@ class TestRateLimitEnforcement:
         with patch("middleware.rate_limit.redis_client") as mock_redis:
             mock_redis.incr.return_value = FREE_TIER_DAILY_LIMIT + 1
             mock_redis.expire.return_value = True
-            resp = client.post("/chat/send",
+            resp = client.post("/api/chat/send",
                 json={"content": "hello"},
                 headers=auth_headers
             )
@@ -74,7 +74,7 @@ class TestRateLimitEnforcement:
         """Mood endpoint should never return 429 from rate limiting."""
         with patch("core.redis_client.redis_client") as mock_redis:
             mock_redis.incr.return_value = 9999
-            resp = client.get("/mood/history", headers=auth_headers)
+            resp = client.get("/api/mood/history", headers=auth_headers)
             assert resp.status_code != 429
 
     def test_health_endpoint_not_rate_limited(self, client):
@@ -89,7 +89,7 @@ class TestRateLimitEnforcement:
         with patch("middleware.rate_limit.redis_client") as mock_redis:
             mock_redis.incr.return_value = FREE_TIER_DAILY_LIMIT + 5
             mock_redis.expire.return_value = True
-            resp = client.post("/chat/send",
+            resp = client.post("/api/chat/send",
                 json={"content": "test"},
                 headers=auth_headers
             )
@@ -103,7 +103,7 @@ class TestRateLimitEnforcement:
         with patch("core.redis_client.redis_client") as mock_redis, \
              patch("services.openrouter.chat_completion", new=AsyncMock(return_value="Hello!")):
             mock_redis.incr.side_effect = Exception("Redis connection refused")
-            resp = client.post("/chat/send",
+            resp = client.post("/api/chat/send",
                 json={"content": "hello"},
                 headers=auth_headers
             )

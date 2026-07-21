@@ -19,7 +19,9 @@ from core.config import settings
 from core.redis_client import redis_client
 
 # ─── Config ──────────────────────────────────────────────────────────────────
-RATE_LIMITED_PATHS = {"/chat/send", "/chat/stream"}
+# Matched by suffix so this stays correct regardless of the router mount prefix
+# (routes are actually served under /api, e.g. /api/chat/send).
+RATE_LIMITED_SUFFIXES = ("/chat/send", "/chat/stream")
 
 FREE_TIER_DAILY_LIMIT = 50       # messages per day for free users
 PREMIUM_TIER_DAILY_LIMIT = 9999  # effectively unlimited
@@ -58,8 +60,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     """
 
     async def dispatch(self, request: Request, call_next):
-        # Only rate-limit specific chat endpoints
-        if request.url.path not in RATE_LIMITED_PATHS:
+        # Only rate-limit specific chat endpoints (suffix match tolerates the /api prefix)
+        if not request.url.path.endswith(RATE_LIMITED_SUFFIXES):
             return await call_next(request)
 
         # Skip OPTIONS (CORS preflight)

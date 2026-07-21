@@ -13,8 +13,10 @@ Security note:
 """
 import asyncio
 import json
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Header
 from fastapi.responses import StreamingResponse
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from core.database import get_db, SessionLocal
 from core.security import get_current_user, decode_token
@@ -70,6 +72,9 @@ def _get_or_create_persona_conversation(
             Conversation.user_id == user_id,
         ).first()
         if conv:
+            # Bump updated_at so active conversations re-sort to the top of the list.
+            conv.updated_at = datetime.utcnow()
+            db.commit()
             return conv
 
     # Auto-title from first 40 chars of message
@@ -102,7 +107,11 @@ def list_conversations(
         if persona:
             query = query.filter(Conversation.persona_id == persona.id)
 
-    convs = query.order_by(Conversation.updated_at.desc().nullslast()).all()
+    # Order by most-recent activity. New conversations have a NULL updated_at,
+    # so fall back to created_at via coalesce to keep them sorted correctly.
+    convs = query.order_by(
+        func.coalesce(Conversation.updated_at, Conversation.created_at).desc()
+    ).all()
     return convs
 
 
@@ -164,11 +173,17 @@ async def send_message(
     history = [m for m in history if m["content"] != payload.content]
     messages = prompt_builder.build_messages(system_prompt, history, payload.content)
 
-    ai_response = await openrouter.chat_completion(messages)
+    try:
+        ai_response = await openrouter.chat_completion(messages)
+    except openrouter.AllModelsFailedError:
+        raise HTTPException(
+            status_code=503,
+            detail="All companions are busy right now. Please try again in a moment. 💙",
+        )
     bot_msg = mem_service.save_message(conv.id, "assistant", ai_response, db)
 
     asyncio.create_task(
-        _extract_memories_async(current_user.id, payload.content, ai_response, db)
+        _extract_memories_async(current_user.id, payload.content, ai_response)
     )
 
     return bot_msg
@@ -245,9 +260,19 @@ async def stream_message(
                 history = [m for m in history if m["content"] != content]
                 messages = prompt_builder.build_messages(system_prompt, history, content)
 
-                async for token in openrouter.chat_completion_stream(messages):
-                    full_response += token
-                    yield f"data: {json.dumps({'token': token})}\n\n"
+                try:
+                    async for token in openrouter.chat_completion_stream(messages):
+                        full_response += token
+                        yield f"data: {json.dumps({'token': token})}\n\n"
+                except openrouter.AllModelsFailedError:
+                    # Every model in the chain failed before producing output.
+                    if not full_response:
+                        fallback_msg = (
+                            "I'm having trouble responding right now — all companions "
+                            "are busy. Please try again in a moment. 💙"
+                        )
+                        full_response = fallback_msg
+                        yield f"data: {json.dumps({'token': fallback_msg})}\n\n"
 
             # Save complete bot response
             mem_service.save_message(conv_id, "assistant", full_response.strip(), db_stream)

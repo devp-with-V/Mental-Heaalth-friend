@@ -76,7 +76,7 @@ def registered_user(client):
         "name": "Test User",
         "gender": "prefer_not_to_say",
     }
-    resp = client.post("/auth/register", json=payload)
+    resp = client.post("/api/auth/register", json=payload)
     assert resp.status_code == 201, f"Registration failed: {resp.json()}"
     return payload
 
@@ -84,7 +84,7 @@ def registered_user(client):
 @pytest.fixture
 def auth_headers(client, registered_user):
     """Log in and return Authorization headers for the test user."""
-    resp = client.post("/auth/login", json={
+    resp = client.post("/api/auth/login", json={
         "email": registered_user["email"],
         "password": registered_user["password"],
     })

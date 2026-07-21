@@ -48,13 +48,23 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
 
 
 @router.post("/refresh", response_model=Token)
-def refresh_token(payload: TokenRefresh):
+def refresh_token(payload: TokenRefresh, db: Session = Depends(get_db)):
     data = decode_token(payload.refresh_token)
     if data.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
     user_id = data.get("sub")
-    access_token = create_access_token({"sub": user_id})
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+    # Look up the user's current tier so a refresh never silently downgrades a
+    # premium account back to "free" (create_access_token defaults tier to free).
+    user = db.query(User).filter(User.id == int(user_id)).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    token_data = {"sub": user_id, "tier": user.subscription_tier or "free"}
+    access_token = create_access_token(token_data)
     refresh_token_new = create_refresh_token({"sub": user_id})
     return Token(access_token=access_token, refresh_token=refresh_token_new)
 

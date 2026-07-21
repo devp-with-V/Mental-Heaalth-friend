@@ -1,10 +1,24 @@
 """
 OpenRouter API client — supports both regular and streaming responses.
+
+Model fallback chain
+---------------------
+Instead of a single model, we try an ordered list (see `settings.openrouter_models_list`,
+configured via OPENROUTER_MODELS, smartest/preferred first). If a model is unavailable,
+rate-limited, or errors out, we transparently fall back to the next one. This keeps chat
+resilient on OpenRouter's free tier, where individual free models are frequently
+rate-limited or deprecated.
+
+Streaming semantics: we only fall back to the next model if the current one fails
+*before emitting any tokens*. Once the user has started seeing output, we never restart
+(that would duplicate text) — a mid-stream failure is raised to the caller instead.
 """
-import json
+import logging
 from typing import AsyncGenerator, List, Dict
 from openai import AsyncOpenAI
 from core.config import settings
+
+logger = logging.getLogger("mindmate.openrouter")
 
 client = AsyncOpenAI(
     api_key=settings.OPENROUTER_API_KEY,
@@ -16,32 +30,97 @@ client = AsyncOpenAI(
 )
 
 
+class AllModelsFailedError(RuntimeError):
+    """Raised when every model in the fallback chain fails."""
+
+
 async def chat_completion(messages: List[Dict[str, str]]) -> str:
-    """Non-streaming chat completion. Returns full response string."""
-    response = await client.chat.completions.create(
-        model=settings.OPENROUTER_MODEL,
-        messages=messages,
-        temperature=0.85,
-        max_tokens=512,
+    """
+    Non-streaming chat completion. Tries each model in the fallback chain in
+    order and returns the first successful, non-empty response.
+
+    Raises AllModelsFailedError if every model fails.
+    """
+    models = settings.openrouter_models_list
+    last_error: Exception | None = None
+
+    for model in models:
+        try:
+            response = await client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=0.85,
+                max_tokens=512,
+            )
+            content = response.choices[0].message.content
+            if content and content.strip():
+                if model != models[0]:
+                    logger.info("chat_completion: fell back to model %s", model)
+                return content
+            # Empty response — treat as a soft failure and try the next model.
+            last_error = RuntimeError(f"Model '{model}' returned an empty response")
+            logger.warning("chat_completion: %s", last_error)
+        except Exception as e:  # noqa: BLE001 — any provider error should trigger fallback
+            last_error = e
+            logger.warning("chat_completion: model '%s' failed: %s", model, e)
+            continue
+
+    raise AllModelsFailedError(
+        f"All {len(models)} model(s) failed. Last error: {last_error}"
     )
-    return response.choices[0].message.content
 
 
 async def chat_completion_stream(
     messages: List[Dict[str, str]],
 ) -> AsyncGenerator[str, None]:
-    """Streaming chat completion. Yields text chunks as they arrive."""
-    stream = await client.chat.completions.create(
-        model=settings.OPENROUTER_MODEL,
-        messages=messages,
-        temperature=0.85,
-        max_tokens=512,
-        stream=True,
+    """
+    Streaming chat completion. Yields text chunks as they arrive.
+
+    Falls back through the model chain if a model fails BEFORE emitting any
+    tokens. If a model fails AFTER tokens have already been streamed to the
+    user, the error is re-raised (we can't safely restart mid-stream).
+    """
+    models = settings.openrouter_models_list
+    last_error: Exception | None = None
+
+    for model in models:
+        emitted = False
+        try:
+            stream = await client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=0.85,
+                max_tokens=512,
+                stream=True,
+            )
+            async for chunk in stream:
+                delta = chunk.choices[0].delta.content
+                if delta:
+                    if not emitted and model != models[0]:
+                        logger.info("chat_completion_stream: fell back to model %s", model)
+                    emitted = True
+                    yield delta
+
+            if emitted:
+                return  # Completed successfully.
+
+            # Stream ended without producing any tokens — soft failure, try next.
+            last_error = RuntimeError(f"Model '{model}' produced an empty stream")
+            logger.warning("chat_completion_stream: %s", last_error)
+        except Exception as e:  # noqa: BLE001
+            if emitted:
+                # Already streamed partial output to the user — cannot restart.
+                logger.error(
+                    "chat_completion_stream: model '%s' failed mid-stream: %s", model, e
+                )
+                raise
+            last_error = e
+            logger.warning("chat_completion_stream: model '%s' failed: %s", model, e)
+            continue
+
+    raise AllModelsFailedError(
+        f"All {len(models)} model(s) failed. Last error: {last_error}"
     )
-    async for chunk in stream:
-        delta = chunk.choices[0].delta.content
-        if delta:
-            yield delta
 
 
 async def test_connection() -> bool:
