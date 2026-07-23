@@ -22,6 +22,14 @@ interface Message {
   streaming?: boolean
 }
 
+interface ConversationSummary {
+  id: number
+  title: string
+  persona_id?: number
+  created_at: string
+  updated_at?: string
+}
+
 const COMPANION_ICONS: Record<string, string> = {
   riya: 'face',
   arjun: 'face_2',
@@ -126,6 +134,9 @@ function ChatContent() {
   const [companions, setCompanions] = useState<Companion[]>([])
   const [activeSlug, setActiveSlug] = useState('riya')
   const [activeConvId, setActiveConvId] = useState<number | null>(null)
+  const [conversations, setConversations] = useState<ConversationSummary[]>([])
+  const [loadingConvs, setLoadingConvs] = useState(false)
+  const [loadingHistory, setLoadingHistory] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -142,10 +153,58 @@ function ChatContent() {
     companionsApi.list().then(({ data }) => setCompanions(data)).catch(() => {})
   }, [])
 
-  // Reset on companion switch
+  // Fetch conversations list for current companion
+  const fetchConversations = (slug = activeSlug) => {
+    setLoadingConvs(true)
+    chatApi
+      .listConversations(slug)
+      .then(({ data }) => setConversations(data))
+      .catch(() => setConversations([]))
+      .finally(() => setLoadingConvs(false))
+  }
+
+  // Load old thread history
+  const loadConversation = async (convId: number) => {
+    if (streaming || convId === activeConvId) return
+    setActiveConvId(convId)
+    setLoadingHistory(true)
+    try {
+      const { data } = await chatApi.getHistory(convId)
+      setMessages(
+        (data.messages || []).map((m: any) => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          created_at: m.created_at,
+        }))
+      )
+    } catch (err) {
+      console.error('Failed to load history', err)
+    } finally {
+      setLoadingHistory(false)
+      setSidebarOpen(false)
+    }
+  }
+
+  // Delete conversation thread
+  const deleteConversationThread = async (e: React.MouseEvent, convId: number) => {
+    e.stopPropagation()
+    try {
+      await chatApi.deleteConversation(convId)
+      setConversations((prev) => prev.filter((c) => c.id !== convId))
+      if (activeConvId === convId) {
+        startNewChat()
+      }
+    } catch (err) {
+      console.error('Failed to delete conversation', err)
+    }
+  }
+
+  // Reset & load conversations on companion switch
   useEffect(() => {
     setActiveConvId(null)
     setMessages([])
+    fetchConversations(activeSlug)
   }, [activeSlug])
 
   // Mood check-in on first daily visit
@@ -192,6 +251,8 @@ function ChatContent() {
             setActiveConvId(data.conversation_id)
           }
           setMessages((prev) => prev.map((m) => (m.id === botMsgId ? { ...m, streaming: false } : m)))
+          // Refresh threads list after new conversation turn
+          fetchConversations(activeSlug)
         } else if (data.token) {
           setMessages((prev) =>
             prev.map((m) => (m.id === botMsgId ? { ...m, content: m.content + data.token } : m))
@@ -242,7 +303,7 @@ function ChatContent() {
         } md:translate-x-0`}
       >
         {/* Logo */}
-        <div className="flex flex-col gap-1 mb-8">
+        <div className="flex flex-col gap-1 mb-6 shrink-0">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-primary text-3xl">psychology</span>
             <h1 className="font-headline text-xl font-bold text-primary">Mind Mate</h1>
@@ -253,15 +314,15 @@ function ChatContent() {
         {/* New Chat CTA */}
         <button
           onClick={startNewChat}
-          className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-label text-sm transition-all active:scale-95 hover:shadow-lg hover:shadow-primary/20 mb-6"
+          className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-label text-sm transition-all active:scale-95 hover:shadow-lg hover:shadow-primary/20 mb-4 shrink-0"
         >
           <span className="material-symbols-outlined">add</span>
           New Conversation
         </button>
 
-        {/* Personas */}
-        <div className="flex flex-col gap-2 flex-grow overflow-y-auto">
-          <h2 className="font-label text-xs text-on-surface-variant uppercase tracking-wider mb-2 px-2">
+        {/* Personas Section */}
+        <div className="flex flex-col gap-2 shrink-0">
+          <h2 className="font-label text-xs text-on-surface-variant uppercase tracking-wider mb-1 px-2">
             Personas
           </h2>
           <nav className="flex flex-col gap-1">
@@ -269,7 +330,7 @@ function ChatContent() {
               <button
                 key={c.slug}
                 onClick={() => { setActiveSlug(c.slug); setSidebarOpen(false) }}
-                className={`persona-item flex items-center justify-between p-3 rounded-lg font-label text-sm transition-all hover:bg-surface-container-high text-left ${
+                className={`persona-item flex items-center justify-between p-2.5 rounded-lg font-label text-sm transition-all hover:bg-surface-container-high text-left ${
                   activeSlug === c.slug
                     ? 'bg-secondary-container text-on-surface font-bold'
                     : 'text-on-surface-variant'
@@ -289,25 +350,73 @@ function ChatContent() {
           </nav>
         </div>
 
+        {/* Recent Threads Section */}
+        <div className="flex flex-col gap-2 flex-grow overflow-y-auto min-h-0 border-t border-outline-variant/20 pt-3 mt-2">
+          <div className="flex items-center justify-between px-2 mb-1">
+            <h2 className="font-label text-xs text-on-surface-variant uppercase tracking-wider">
+              Recent Threads
+            </h2>
+            {loadingConvs && (
+              <span className="material-symbols-outlined text-xs animate-spin text-primary">
+                progress_activity
+              </span>
+            )}
+          </div>
+
+          {conversations.length === 0 ? (
+            <p className="font-label text-xs text-on-surface-variant/60 italic px-2 py-2">
+              No saved threads with {activeCompanion?.display_name || 'this companion'}.
+            </p>
+          ) : (
+            <nav className="flex flex-col gap-1 pr-1">
+              {conversations.map((conv) => (
+                <div
+                  key={conv.id}
+                  onClick={() => loadConversation(conv.id)}
+                  className={`group flex items-center justify-between p-2.5 rounded-lg text-xs font-label transition-all cursor-pointer ${
+                    activeConvId === conv.id
+                      ? 'bg-primary/10 text-primary font-semibold border border-primary/20'
+                      : 'text-on-surface-variant hover:bg-surface-container-high'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 truncate min-w-0 pr-1">
+                    <span className="material-symbols-outlined text-sm shrink-0">
+                      chat_bubble_outline
+                    </span>
+                    <span className="truncate">{conv.title}</span>
+                  </div>
+                  <button
+                    onClick={(e) => deleteConversationThread(e, conv.id)}
+                    title="Delete conversation"
+                    className="opacity-0 group-hover:opacity-100 p-1 hover:text-error transition-opacity shrink-0"
+                  >
+                    <span className="material-symbols-outlined text-sm">delete</span>
+                  </button>
+                </div>
+              ))}
+            </nav>
+          )}
+        </div>
+
         {/* Footer nav */}
-        <div className="flex flex-col gap-1 pt-4 border-t border-outline-variant/30">
+        <div className="flex flex-col gap-1 pt-3 border-t border-outline-variant/30 shrink-0">
           <button
             onClick={() => router.push('/profile')}
-            className="flex items-center gap-3 p-3 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
+            className="flex items-center gap-3 p-2.5 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
           >
             <span className="material-symbols-outlined">person</span>
             <span>Profile</span>
           </button>
           <button
             onClick={() => setShowMood(true)}
-            className="flex items-center gap-3 p-3 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
+            className="flex items-center gap-3 p-2.5 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
           >
             <span className="material-symbols-outlined">mood</span>
             <span>Mood Check</span>
           </button>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 p-3 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
+            className="flex items-center gap-3 p-2.5 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
           >
             <span className="material-symbols-outlined">logout</span>
             <span>Sign out</span>
@@ -338,7 +447,11 @@ function ChatContent() {
             <div className="md:hidden font-headline text-lg font-bold text-primary">Mind Mate</div>
           </div>
           <div className="flex items-center gap-4">
-            <button className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
+            <button
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              title="Toggle Thread History"
+              className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
+            >
               <span className="material-symbols-outlined">history</span>
             </button>
             <div className="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-label text-sm font-bold">
@@ -347,9 +460,14 @@ function ChatContent() {
           </div>
         </header>
 
-        {/* Messages */}
+        {/* Messages / Loading / Empty state */}
         <section className="flex-grow flex flex-col items-center justify-center px-5 md:px-10 overflow-y-auto chat-container z-10">
-          {messages.length === 0 ? (
+          {loadingHistory ? (
+            <div className="flex flex-col items-center gap-3 text-primary animate-pulse py-12">
+              <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+              <p className="font-label text-sm">Loading conversation history...</p>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="max-w-chat-width w-full flex flex-col items-center text-center fade-in py-12">
               <div className="w-24 h-24 mb-8 bg-primary/10 rounded-full flex items-center justify-center">
                 <span

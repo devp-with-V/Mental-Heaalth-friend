@@ -58,6 +58,7 @@ export const chatApi = {
     return api.get('/chat/conversations', { params })
   },
   getHistory: (id: number) => api.get(`/chat/history/${id}`),
+  deleteConversation: (id: number) => api.delete(`/chat/conversations/${id}`),
   send: (data: object) => api.post('/chat/send', data),
 
   /**

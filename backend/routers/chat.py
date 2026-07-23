@@ -79,7 +79,7 @@ def _get_or_create_persona_conversation(
 
     # Auto-title from first 40 chars of message
     title = first_message[:40] + ("…" if len(first_message) > 40 else "")
-    conv = Conversation(user_id=user_id, persona_id=persona_id, title=title)
+    conv = Conversation(user_id=user_id, persona_id=persona_id, title=title, updated_at=datetime.utcnow())
     db.add(conv)
     db.commit()
     db.refresh(conv)
@@ -129,6 +129,24 @@ def get_history(
     if not conv:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return conv
+
+
+@router.delete("/conversations/{conversation_id}")
+def delete_conversation(
+    conversation_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Delete a specific conversation for the current user."""
+    conv = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == current_user.id,
+    ).first()
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    db.delete(conv)
+    db.commit()
+    return {"message": "Conversation deleted successfully"}
 
 
 # ─── Non-streaming send ───────────────────────────────────────────────────────
@@ -293,7 +311,6 @@ async def stream_message(
         headers={
             "Cache-Control": "no-cache",
             "X-Accel-Buffering": "no",
-            "Access-Control-Allow-Origin": "*",
         },
     )
 

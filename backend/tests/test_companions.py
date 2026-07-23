@@ -257,3 +257,36 @@ class TestPromptBuilderPersonaInjection:
             prompt = build_system_prompt(self._make_user(), [], "Hello", persona=persona)
             assert "india" in prompt.lower() or "Indian" in prompt, \
                 f"Cultural context missing from {slug} prompt"
+
+
+# ─── Conversation Delete Endpoint ──────────────────────────────────────────────
+
+class TestConversationDeleteEndpoint:
+    def _seed(self, db):
+        from models.db_models import Persona
+        from services.personas import PERSONAS
+        for data in PERSONAS:
+            p = Persona(**data)
+            db.add(p)
+        db.flush()
+
+    def test_delete_conversation_success(self, client, db, auth_headers):
+        self._seed(db)
+        from models.db_models import Conversation, User
+        user = db.query(User).first()
+        conv = Conversation(user_id=user.id, title="Test Thread to Delete")
+        db.add(conv)
+        db.commit()
+        db.refresh(conv)
+
+        resp = client.delete(f"/api/chat/conversations/{conv.id}", headers=auth_headers)
+        assert resp.status_code == 200
+        assert resp.json()["message"] == "Conversation deleted successfully"
+
+        # Verify deleted in DB
+        assert db.query(Conversation).filter(Conversation.id == conv.id).first() is None
+
+    def test_delete_nonexistent_conversation_returns_404(self, client, db, auth_headers):
+        resp = client.delete("/api/chat/conversations/999999", headers=auth_headers)
+        assert resp.status_code == 404
+

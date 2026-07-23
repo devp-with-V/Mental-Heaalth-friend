@@ -87,6 +87,24 @@ class TestTokenRefresh:
         assert resp.status_code == 200
         assert "access_token" in resp.json()
 
+    def test_refresh_preserves_premium_tier(self, client, db, registered_user):
+        from models.db_models import User
+        from core.security import decode_token
+        user = db.query(User).filter(User.email == registered_user["email"]).first()
+        user.subscription_tier = "premium"
+        db.commit()
+
+        login_resp = client.post("/api/auth/login", json={
+            "email": registered_user["email"],
+            "password": registered_user["password"],
+        })
+        refresh_token = login_resp.json()["refresh_token"]
+        resp = client.post("/api/auth/refresh", json={"refresh_token": refresh_token})
+        assert resp.status_code == 200
+        new_access_token = resp.json()["access_token"]
+        payload = decode_token(new_access_token)
+        assert payload.get("tier") == "premium"
+
     def test_refresh_with_access_token_fails(self, client, registered_user):
         login_resp = client.post("/api/auth/login", json={
             "email": registered_user["email"],
