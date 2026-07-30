@@ -118,3 +118,15 @@ All 133 backend test cases cover authentication, JWT refresh claims, companion r
 MindMate is an AI companion designed for emotional support and wellness guidance. It is **not** a substitute for professional clinical therapy or emergency healthcare services. If you or someone you know is in crisis, please reach out to dedicated emergency helplines:
 - **India**: iCALL (9152987821) | Vandrevala Foundation (1860-2662-345) | Tele-MANAS (14416)
 - **International**: 988 (US/Canada) | 111 (UK)
+
+---
+
+## 📜 License & Terms of Use
+
+**Copyright © 2026. All Rights Reserved.**
+
+This repository is **source-available for viewing and portfolio demonstration purposes only**.
+
+- 👁️ **View-Only Access**: Permission is granted to view, inspect, and evaluate the source code strictly for review or portfolio assessment.
+- ❌ **No Reuse or Commercial Use**: You may **not** copy, modify, distribute, sub-license, host public instances, or use any portion of this codebase for commercial or non-commercial products.
+- ❌ **No Reproduction**: Unauthorised cloning, re-uploading, or reproduction of this application or its companion persona prompts is strictly prohibited.
