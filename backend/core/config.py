@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     # Single default model (kept for backward compatibility).
-    OPENROUTER_MODEL: str = "mistralai/mistral-7b-instruct:free"
+    OPENROUTER_MODEL: str = "openrouter/free"
     # Ordered fallback chain, smartest/preferred first, comma-separated.
     # If a model is unavailable, rate-limited, or errors, the next one is tried.
     # Falls back to OPENROUTER_MODEL if left empty.
@@ -46,7 +46,7 @@ class Settings(BaseSettings):
         """
         raw = self.OPENROUTER_MODELS.strip() or self.OPENROUTER_MODEL
         models = [m.strip() for m in raw.split(",") if m.strip()]
-        return models or ["mistralai/mistral-7b-instruct:free"]
+        return models or ["openrouter/free"]
 
     class Config:
         env_file = ".env"

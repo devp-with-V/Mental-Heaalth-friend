@@ -149,6 +149,23 @@ def delete_conversation(
     return {"message": "Conversation deleted successfully"}
 
 
+def _get_companion_fallback_message(persona_slug: Optional[str] = None) -> str:
+    """
+    Return a warm, in-character friendly message if AI models are temporarily busy.
+    Avoids cold, corporate error messages so the user never feels isolated.
+    """
+    slug = (persona_slug or "").lower()
+    if slug == "riya":
+        return "Just a sec! I'm taking a quick breather — give me just a moment and try sending that again 💙"
+    elif slug == "arjun":
+        return "Hey, give me just a second to gather my thoughts! Try sending your message again in a moment 💙"
+    elif slug == "alex":
+        return "Hold on just a sec! I'm resolving a quick thought. Give me a moment and send that again 💙"
+    elif slug == "guide":
+        return "Just a moment, let's take a gentle breath together. Try sending your message again in a moment 💙"
+    return "Just a sec! I'm taking a quick breather. Give me just a moment and try sending your message again 💙"
+
+
 # ─── Non-streaming send ───────────────────────────────────────────────────────
 
 @router.post("/send", response_model=MessageOut)
@@ -194,9 +211,10 @@ async def send_message(
     try:
         ai_response = await openrouter.chat_completion(messages)
     except openrouter.AllModelsFailedError:
+        fallback_msg = _get_companion_fallback_message(slug)
         raise HTTPException(
             status_code=503,
-            detail="All companions are busy right now. Please try again in a moment. 💙",
+            detail=fallback_msg,
         )
     bot_msg = mem_service.save_message(conv.id, "assistant", ai_response, db)
 
@@ -285,10 +303,7 @@ async def stream_message(
                 except openrouter.AllModelsFailedError:
                     # Every model in the chain failed before producing output.
                     if not full_response:
-                        fallback_msg = (
-                            "I'm having trouble responding right now — all companions "
-                            "are busy. Please try again in a moment. 💙"
-                        )
+                        fallback_msg = _get_companion_fallback_message(persona_slug_str)
                         full_response = fallback_msg
                         yield f"data: {json.dumps({'token': fallback_msg})}\n\n"
 

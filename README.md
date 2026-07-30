@@ -1,135 +1,120 @@
 # 🧠 MindMate — Mental Health Companion Chatbot
 
-MindMate is a friendly AI companion chatbot featuring four unique, culturally-aware Indian companions: Riya, Arjun, Alex, and The Guide. It features long-term memory extraction, SSE streaming, mood tracking, and safety redirect features.
+MindMate is a modern mental health companion web application featuring four unique, culturally aware Indian companion personas (**Riya**, **Arjun**, **Alex**, and **The Guide**). It provides long-term memory recall, token-by-token SSE streaming, thread history management, mood tracking, and automated crisis detection with localized helplines.
 
 ---
 
-## 🚀 Quick Start & How to Run
+## 🛠️ Technology Stack
 
-Follow these steps to configure, run, and check the application locally.
-
-### 1. Environment Setup
-
-Copy the example environment file and configure the settings:
-```bash
-# In the repository root:
-cp backend/.env.example backend/.env
-```
-
-Open `backend/.env` and update the following settings:
-- **`OPENROUTER_API_KEY`**: Set your OpenRouter API key (free models are supported).
-- **`DATABASE_URL`**: Update with your local PostgreSQL user and password:
-  ```env
-  DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/mindmate
-  ```
-- **`REDIS_URL`**: The application uses Redis for rate-limiting. If Redis is not running locally, the backend will **automatically fail-open** (allow all chat messages) without crashing.
-  ```env
-  REDIS_URL=redis://localhost:6379
-  ```
+- **Frontend**: Next.js 15 (App Router), React 18, Tailwind CSS, Axios, React Markdown.
+- **Backend**: FastAPI, SQLAlchemy ORM, Alembic migrations, Pydantic v2, Pytest.
+- **AI Integration**: OpenRouter API (`openrouter/free` auto-routing with fallback support).
+- **Database**: PostgreSQL (SQLAlchemy ORM + Alembic) & Neon PostgreSQL for production.
+- **Infrastructure**: Docker & Docker Compose with multi-worker Uvicorn setup.
 
 ---
 
-### 2. Database Setup & Migrations
+## 🚀 Quick Start (Local Development)
 
-Make sure your local PostgreSQL server is running, and create a database named `mindmate`:
-```sql
-CREATE DATABASE mindmate;
-```
+### 1. Backend Setup
 
-Apply the database migrations to set up the tables and schemas:
 ```bash
+# Navigate to backend directory
 cd backend
+
+# Create virtual environment (if not already created)
+python -m venv venv
 
 # Activate virtual environment
-venv\Scripts\activate
+# Windows (CMD): venv\Scripts\activate
+# Windows (PowerShell): .\venv\Scripts\Activate.ps1
+# Mac/Linux: source venv/bin/activate
 
-# Run Alembic migrations to create tables
+# Install dependencies
+pip install -r requirements.txt
+
+# Copy environment template and fill in your secrets
+cp .env.example .env
+```
+
+Open `backend/.env` and configure:
+- `OPENROUTER_API_KEY`: Your OpenRouter API key.
+- `DATABASE_URL`: PostgreSQL connection string (`postgresql://postgres:password@localhost:5432/mindmate`).
+- `SECRET_KEY`: Random 32-byte hex string (`python -c "import secrets; print(secrets.token_hex(32))"`).
+
+Run database migrations:
+```bash
 alembic upgrade head
 ```
-*(On startup, the backend server will automatically seed the 4 companion persona records into the database).*
 
----
-
-### 3. Run the Servers
-
-#### **Backend Server**
-Start the FastAPI server on port 8000:
+Start the FastAPI backend:
 ```bash
-cd backend
-venv\Scripts\activate
 uvicorn main:app --reload --port 8000
 ```
-- **Interactive API Docs:** http://localhost:8000/docs
-- **Health Check:** http://localhost:8000/health
+- **Interactive OpenAPI Docs**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
 
-#### **Frontend Server**
-Start the React + Vite development server on port 5173:
+---
+
+### 2. Frontend Setup
+
 ```bash
+# Navigate to frontend directory
 cd frontend
+
+# Install Node dependencies
 npm install
+
+# Start Next.js development server
 npm run dev
 ```
-- **Local Application URL:** http://localhost:5173/
+
+Open http://localhost:3000 in your browser. Next.js automatically proxies API calls from `/api/*` to `http://localhost:8000/api/*`.
 
 ---
 
-## ⚙️ Project Architecture (Phase 1)
+## 🐳 Running with Docker Compose
 
-- **Backend (`FastAPI`):** Uses SSE (Server-Sent Events) for real-time text streaming. Authentic tokens are passed securely in the `Authorization` header instead of URL params.
-- **Frontend (`React + Vite`):** A three-panel interface featuring:
-  - **Left Panel:** Companion selection (Riya, Arjun, Alex, The Guide).
-  - **Middle Panel:** Conversation threads unique to each companion.
-  - **Right Panel:** Interactive chat window matching the color theme of the selected companion.
-- **Safety / Crisis detection:** Backend automatically scans incoming messages for keywords and provides immediate helplines (including India-specific ICALL resources).
+Run the full stack (PostgreSQL + Redis + FastAPI Backend + Next.js Frontend) with a single command:
 
-
-### 1. If you are using Git Bash (MINGW64) (Your current terminal)
-Since you are already inside `~/Desktop/Mental Heaalth Bot/backend`, run:
 ```bash
-# 1. Activate the virtual environment
-source venv/Scripts/activate
-
-# 2. Run migrations
-alembic upgrade head
-
-# 3. Seed the test user account
-python scripts/create_test_user.py
+docker-compose up --build
 ```
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
 
 ---
 
-### 2. If you open a new Command Prompt (CMD)
-Navigate to the backend folder and run:
-```cmd
-cd "C:\Users\vedan\Desktop\Mental Heaalth Bot\backend"
+## 🧪 Running Tests
 
-# 1. Activate the virtual environment
-venv\Scripts\activate
+Run the backend test suite:
 
-# 2. Run migrations
-alembic upgrade head
-
-# 3. Seed the test user account
-python scripts/create_test_user.py
+```bash
+cd backend
+venv\Scripts\python -m pytest backend/tests
 ```
+
+All 133 backend test cases cover authentication, JWT refresh claims, companion routing, crisis keywords, rate limiting, and memory extraction.
 
 ---
 
-### 3. If you open a new PowerShell
-Navigate to the backend folder and run:
-```powershell
-cd "C:\Users\vedan\Desktop\Mental Heaalth Bot\backend"
+## ☁️ Cloud Deployment (Render + Vercel + Neon)
 
-# 1. Activate the virtual environment
-.\venv\Scripts\Activate.ps1
+1. **Database (Neon)**: Create a free PostgreSQL instance on [Neon](https://neon.tech) and copy the connection URI.
+2. **Backend (Render)**:
+   - Create a Web Service pointing to the `backend/` directory.
+   - Build command: `pip install -r requirements.txt`
+   - Release command: `alembic upgrade head`
+   - Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT --workers 4`
+3. **Frontend (Vercel)**:
+   - Create a new project pointing to the `frontend/` directory.
+   - Set environment variable `BACKEND_URL` to your Render backend URL.
 
-# 2. Run migrations
-alembic upgrade head
+---
 
-# 3. Seed the test user account
-python scripts/create_test_user.py
-```
+## 🛡️ Privacy & Safety Disclaimer
 
-
-Email: test@mindmate.com
-Password: Password123!
+MindMate is an AI companion designed for emotional support and wellness guidance. It is **not** a substitute for professional clinical therapy or emergency healthcare services. If you or someone you know is in crisis, please reach out to dedicated emergency helplines:
+- **India**: iCALL (9152987821) | Vandrevala Foundation (1860-2662-345) | Tele-MANAS (14416)
+- **International**: 988 (US/Canada) | 111 (UK)

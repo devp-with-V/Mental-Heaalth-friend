@@ -49,14 +49,20 @@ async def chat_completion(messages: List[Dict[str, str]]) -> str:
             response = await client.chat.completions.create(
                 model=model,
                 messages=messages,
-                temperature=0.85,
+                temperature=0.7,
+                top_p=0.9,
+                presence_penalty=0.1,
                 max_tokens=512,
             )
             content = response.choices[0].message.content
             if content and content.strip():
-                if model != models[0]:
-                    logger.info("chat_completion: fell back to model %s", model)
-                return content
+                # Clean any <unk> token degeneration artifacts if present
+                if "<unk>" in content:
+                    content = content.split("<unk>")[0].strip()
+                if content:
+                    if model != models[0]:
+                        logger.info("chat_completion: fell back to model %s", model)
+                    return content
             # Empty response — treat as a soft failure and try the next model.
             last_error = RuntimeError(f"Model '{model}' returned an empty response")
             logger.warning("chat_completion: %s", last_error)
@@ -89,13 +95,22 @@ async def chat_completion_stream(
             stream = await client.chat.completions.create(
                 model=model,
                 messages=messages,
-                temperature=0.85,
+                temperature=0.7,
+                top_p=0.9,
+                presence_penalty=0.1,
                 max_tokens=512,
                 stream=True,
             )
             async for chunk in stream:
                 delta = chunk.choices[0].delta.content
                 if delta:
+                    # Immediately break stream if model degenerates into <unk> special tokens
+                    if "<unk>" in delta:
+                        logger.warning("chat_completion_stream: <unk> token degeneration detected from model %s", model)
+                        clean_part = delta.split("<unk>")[0]
+                        if clean_part:
+                            yield clean_part
+                        break
                     if not emitted and model != models[0]:
                         logger.info("chat_completion_stream: fell back to model %s", model)
                     emitted = True
