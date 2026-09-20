@@ -93,7 +93,6 @@ build/
 
 # Misc frontend
 *.tsbuildinfo
-next-env.d.ts
 
 # ─── Logs ─────────────────────────────────────────────────────────────────────
 logs/

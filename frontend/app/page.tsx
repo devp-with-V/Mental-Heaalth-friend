@@ -1,9 +1,56 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { SignInButton, useAuth as useClerkAuth } from '@clerk/nextjs'
 import { useAuth } from '@/context/AuthContext'
 import AuthGuard from '@/components/AuthGuard'
+import axios from 'axios'
+
+function ClerkHybridSync() {
+  const clerkAuth = useClerkAuth()
+  const { user, loginWithTokens } = useAuth()
+  const router = useRouter()
+  const syncedRef = useRef(false)
+
+  useEffect(() => {
+    if (!clerkAuth.isLoaded || !clerkAuth.isSignedIn) return
+    if (user || syncedRef.current) return
+    
+    syncedRef.current = true
+    
+    clerkAuth.getToken().then(token => {
+      axios.post('/api/auth/clerk-login', { clerk_token: token })
+        .then(res => {
+          loginWithTokens(res.data.access_token, res.data.refresh_token)
+            .then(() => router.push('/chat'))
+            .catch(() => {})
+        })
+        .catch(err => {
+          console.error("Clerk sync failed", err)
+        })
+    }).catch(err => {
+      console.error("Failed to get Clerk token", err)
+    })
+  }, [clerkAuth.isLoaded, clerkAuth.isSignedIn, user, loginWithTokens, router])
+
+  // Show a loading overlay while syncing
+  if (clerkAuth.isSignedIn && !user && syncedRef.current) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        <div className="text-center">
+          <span className="material-symbols-outlined text-primary animate-spin text-5xl mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>
+            autorenew
+          </span>
+          <h2 className="font-headline text-xl text-on-surface">Securing your session...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  return null
+}
+
 
 const GENDER_OPTIONS = [
   { value: 'male', label: '♂ Male' },
@@ -60,12 +107,23 @@ function SignInModal({
             {error}
           </div>
         )}
-        <div className="relative mb-8 text-center">
+        
+        {/* Clerk Sign In Button */}
+        <div className="mb-6">
+          <SignInButton mode="modal">
+            <button className="w-full flex items-center justify-center gap-3 bg-white border border-outline-variant/30 text-on-surface py-3 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-sm hover:bg-surface-container-lowest transition-all active:scale-95">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
+              Sign in with Google
+            </button>
+          </SignInButton>
+        </div>
+
+        <div className="relative mb-6 text-center">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-outline-variant/30" />
           </div>
           <span className="relative bg-white px-4 text-xs font-label uppercase tracking-widest text-outline">
-            sign in with email
+            or sign in with email
           </span>
         </div>
         <form className="space-y-5" onSubmit={submit}>
@@ -111,7 +169,7 @@ function SignInModal({
         </form>
         <p className="text-center mt-10 text-on-surface-variant text-sm font-body">
           New to Mind Mate?{' '}
-          <button className="text-primary font-bold hover:underline" onClick={onToggle}>
+          <button type="button" className="text-primary font-bold hover:underline" onClick={onToggle}>
             Create an account
           </button>
         </p>
@@ -171,7 +229,7 @@ function SignUpModal({
   }
 
   return (
-    <div className="glass-panel w-full max-w-md rounded-2xl modal-shadow overflow-hidden fade-in">
+    <div className="glass-panel w-full max-w-md rounded-2xl modal-shadow overflow-hidden fade-in h-auto max-h-[90vh] overflow-y-auto">
       <div className="p-8 md:p-12">
         <div className="flex justify-between items-start mb-8">
           <div className="font-headline text-2xl text-primary font-bold">Mind Mate</div>
@@ -188,7 +246,18 @@ function SignUpModal({
             {error}
           </div>
         )}
-        <div className="relative mb-8 text-center">
+
+        {/* Clerk Sign Up Button */}
+        <div className="mb-6">
+          <SignInButton mode="modal">
+            <button className="w-full flex items-center justify-center gap-3 bg-white border border-outline-variant/30 text-on-surface py-3 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-sm hover:bg-surface-container-lowest transition-all active:scale-95">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
+              Sign up with Google
+            </button>
+          </SignInButton>
+        </div>
+
+        <div className="relative mb-6 text-center">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-outline-variant/30" />
           </div>
@@ -329,6 +398,7 @@ function LandingContent() {
 
   return (
     <>
+      <ClerkHybridSync />
       {/* Header */}
       <header className="w-full top-0 sticky bg-surface z-40 transition-colors duration-300">
         <nav className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto w-full">

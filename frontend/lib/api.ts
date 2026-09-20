@@ -64,16 +64,34 @@ export const chatApi = {
   /**
    * Secure SSE stream using fetch() instead of native EventSource.
    * fetch() allows sending the Authorization header which EventSource cannot.
+   * We proactively refresh the access token before opening the stream so that
+   * an expired token doesn't cause a 401 mid-stream.
    */
   stream: async function* (
     content: string,
     personaSlug = 'riya',
     conversationId: number | null = null
   ) {
-    const token =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('access_token')
-        : null
+    // ── Step 1: Proactively refresh token if needed ────────────────────────
+    let token: string | null = null
+    if (typeof window !== 'undefined') {
+      token = localStorage.getItem('access_token')
+      const refresh = localStorage.getItem('refresh_token')
+
+      // Try to refresh if we have a refresh token (catches expiry before stream opens)
+      if (refresh) {
+        try {
+          const { data } = await axios.post('/api/auth/refresh', { refresh_token: refresh })
+          localStorage.setItem('access_token', data.access_token)
+          localStorage.setItem('refresh_token', data.refresh_token)
+          token = data.access_token
+        } catch {
+          // Refresh failed — use existing token, will 401 below if truly expired
+        }
+      }
+    }
+
+    // ── Step 2: Open SSE stream with fresh token ───────────────────────────
     const params = new URLSearchParams({ content, persona_slug: personaSlug })
     if (conversationId) params.set('conversation_id', String(conversationId))
 
@@ -87,6 +105,12 @@ export const chatApi = {
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        // Token is truly dead — send user to login
+        localStorage.clear()
+        window.location.href = '/?login=true'
+        return
+      }
       const body = await response.json().catch(() => ({}))
       throw new Error((body as { detail?: string }).detail || `HTTP ${response.status}`)
     }

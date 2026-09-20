@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Noto_Serif, Inter, Public_Sans } from 'next/font/google'
 import { AuthProvider } from '@/context/AuthContext'
+import { ClerkProvider } from '@clerk/nextjs'
+import BackendStatus from '@/components/BackendStatus'
 import './globals.css'
 
 const notoSerif = Noto_Serif({
@@ -48,7 +50,10 @@ export default function RootLayout({
         className={`${notoSerif.variable} ${inter.variable} ${publicSans.variable} bg-background text-on-background antialiased overflow-x-hidden`}
         style={{ fontFamily: 'var(--font-inter), sans-serif' }}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <ClerkProvider>
+          <BackendStatus />
+          <AuthProvider>{children}</AuthProvider>
+        </ClerkProvider>
       </body>
     </html>
   )

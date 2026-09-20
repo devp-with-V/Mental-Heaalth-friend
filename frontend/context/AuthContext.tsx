@@ -21,6 +21,7 @@ interface AuthContextType {
     password: string,
     gender?: string
   ) => Promise<unknown>
+  loginWithTokens: (access: string, refresh: string) => Promise<User>
   logout: () => void
   updateProfile: (updates: Partial<User>) => Promise<User>
 }
@@ -60,10 +61,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string,
     email: string,
     password: string,
-    gender = 'prefer_not_to_say'
+    gender?: string
   ) => {
-    const { data } = await authApi.register({ name, email, password, gender })
-    return data
+    return authApi.register({ name, email, password, gender })
+  }
+
+  const loginWithTokens = async (access: string, refresh: string): Promise<User> => {
+    localStorage.setItem('access_token', access)
+    localStorage.setItem('refresh_token', refresh)
+    const me = await authApi.me()
+    setUser(me.data)
+    return me.data
   }
 
   const updateProfile = async (updates: Partial<User>): Promise<User> => {
@@ -78,9 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, login, register, logout, updateProfile }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, register, loginWithTokens, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   )

@@ -83,3 +83,9 @@ def root():
 @app.get("/health", tags=["Health"])
 def health():
     return {"status": "healthy"}
+
+
+@app.get("/api/health", tags=["Health"])
+def api_health():
+    """Health check accessible through the /api rewrite proxy."""
+    return {"status": "healthy"}

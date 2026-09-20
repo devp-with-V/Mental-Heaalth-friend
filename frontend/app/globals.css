@@ -47,13 +47,14 @@
 }
 
 /* Chat scrollbar */
-.chat-container::-webkit-scrollbar {
-  width: 4px;
-}
-.chat-container::-webkit-scrollbar-thumb {
-  background: #dac1b8;
-  border-radius: 10px;
-}
+.chat-container::-webkit-scrollbar { width: 4px; }
+.chat-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+.chat-container::-webkit-scrollbar-track { background: transparent; }
+
+/* Sidebar scrollbar */
+.sidebar-scroll::-webkit-scrollbar { width: 3px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 10px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
 
 /* Persona hover */
 .persona-item:hover .chevron-icon {

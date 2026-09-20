@@ -19,6 +19,10 @@ class UserLogin(BaseModel):
     password: str
 
 
+class ClerkLogin(BaseModel):
+    clerk_token: str
+
+
 class Token(BaseModel):
     access_token: str
     refresh_token: str

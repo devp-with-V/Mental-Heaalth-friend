@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 import { useAuth } from '@/context/AuthContext'
@@ -30,15 +30,24 @@ interface ConversationSummary {
   updated_at?: string
 }
 
-const COMPANION_ICONS: Record<string, string> = {
-  riya: 'face',
-  arjun: 'face_2',
-  alex: 'face_3',
-  guide: 'psychology',
-  squad: 'groups',
+// Per-companion accent colours for dynamic theming
+const COMPANION_THEME: Record<string, { accent: string; bg: string; border: string; bubble: string; dot: string }> = {
+  riya:  { accent: 'text-rose-400',   bg: 'bg-rose-500/10',   border: 'border-rose-400/30',  bubble: 'bg-rose-500',   dot: 'bg-rose-400'   },
+  arjun: { accent: 'text-blue-400',   bg: 'bg-blue-500/10',   border: 'border-blue-400/30',  bubble: 'bg-blue-500',   dot: 'bg-blue-400'   },
+  alex:  { accent: 'text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-400/30', bubble: 'bg-amber-500',  dot: 'bg-amber-400'  },
+  guide: { accent: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-400/30',bubble: 'bg-violet-500', dot: 'bg-violet-400' },
+  squad: { accent: 'text-emerald-400',bg: 'bg-emerald-500/10',border: 'border-emerald-400/30',bubble:'bg-emerald-500',dot: 'bg-emerald-400' },
 }
 
-// ─── Mood Check-in Modal ────────────────────────────────────────────────
+const COMPANION_STATUS: Record<string, string> = {
+  riya:  'Your warm best friend 🌸',
+  arjun: 'Steady guy in your corner ⚡',
+  alex:  'Big brother energy 🦁',
+  guide: 'Mindful & grounding 🧘',
+  squad: 'The whole crew 🫂',
+}
+
+// ─── Mood Check-in Modal ─────────────────────────────────────────────────────
 function MoodModal({ onClose }: { onClose: () => void }) {
   const [score, setScore] = useState(5)
   const [tag, setTag] = useState('')
@@ -58,57 +67,32 @@ function MoodModal({ onClose }: { onClose: () => void }) {
   const emoji = score <= 3 ? '😔' : score <= 5 ? '😐' : score <= 7 ? '🙂' : score <= 9 ? '😊' : '🌟'
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/30 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="glass-panel w-full max-w-sm rounded-2xl p-8 modal-shadow fade-in"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
+      <div className="w-full max-w-sm rounded-2xl p-8 bg-[#1a1a2e] border border-white/10 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         {saved ? (
-          <div className="text-center text-on-surface font-headline text-xl py-4">
-            ✅ Mood logged! 💙
-          </div>
+          <div className="text-center text-white font-headline text-xl py-4">✅ Mood logged! 💙</div>
         ) : (
           <>
-            <h3 className="font-headline text-2xl text-on-surface mb-6">How are you feeling today?</h3>
+            <h3 className="font-headline text-2xl text-white mb-6">How are you feeling?</h3>
             <div className="text-5xl text-center mb-2">{emoji}</div>
-            <div className="text-center font-label text-sm text-outline mb-4">{score} / 10</div>
-            <input
-              type="range"
-              min={1}
-              max={10}
-              step={0.5}
-              value={score}
+            <div className="text-center font-label text-sm text-white/50 mb-4">{score} / 10</div>
+            <input type="range" min={1} max={10} step={0.5} value={score}
               onChange={(e) => setScore(parseFloat(e.target.value))}
-              className="w-full accent-primary mb-6"
-            />
+              className="w-full accent-violet-500 mb-6" />
             <div className="flex flex-wrap gap-2 mb-6">
               {suggestions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setTag((t) => (t === s ? '' : s))}
+                <button key={s} onClick={() => setTag((t) => (t === s ? '' : s))}
                   className={`px-3 py-1 rounded-full font-label text-xs border transition-all ${
-                    tag === s
-                      ? 'bg-primary text-on-primary border-primary'
-                      : 'border-outline-variant/40 text-on-surface-variant hover:border-primary/50'
-                  }`}
-                >
+                    tag === s ? 'bg-violet-500 text-white border-violet-500' : 'border-white/20 text-white/60 hover:border-violet-400/50'
+                  }`}>
                   {s}
                 </button>
               ))}
             </div>
-            <button
-              onClick={save}
-              className="w-full bg-primary text-on-primary py-3 rounded-full font-label text-sm uppercase tracking-widest mb-3 hover:opacity-90 transition-all"
-            >
+            <button onClick={save} className="w-full bg-violet-500 hover:bg-violet-400 text-white py-3 rounded-full font-label text-sm uppercase tracking-widest mb-3 transition-all">
               Save 💙
             </button>
-            <button
-              onClick={onClose}
-              className="w-full py-3 rounded-full font-label text-sm uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high transition-all"
-            >
+            <button onClick={onClose} className="w-full py-3 rounded-full font-label text-sm text-white/40 hover:text-white/70 transition-all">
               Skip
             </button>
           </>
@@ -118,15 +102,15 @@ function MoodModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-// ─── Quick Action Cards ────────────────────────────────────────────────
+// ─── Quick Action Cards ───────────────────────────────────────────────────────
 const QUICK_ACTIONS = [
-  { icon: 'mood', label: 'Check-in', prompt: "Let's do a quick emotional check-in." },
-  { icon: 'self_improvement', label: 'Meditate', prompt: 'I need help meditating and calming down.' },
-  { icon: 'edit_note', label: 'Journal', prompt: 'I want to journal my thoughts. Can you guide me?' },
-  { icon: 'lightbulb', label: 'Advice', prompt: 'I need some practical advice.' },
+  { icon: 'mood',            label: 'Check-in', prompt: "Let's do a quick emotional check-in." },
+  { icon: 'self_improvement',label: 'Meditate', prompt: 'I need help meditating and calming down.' },
+  { icon: 'edit_note',       label: 'Journal',  prompt: 'I want to journal my thoughts. Can you guide me?' },
+  { icon: 'lightbulb',       label: 'Advice',   prompt: 'I need some practical advice.' },
 ]
 
-// ─── Main Chat Page ────────────────────────────────────────────────────
+// ─── Main Chat Page ───────────────────────────────────────────────────────────
 function ChatContent() {
   const { user, logout } = useAuth()
   const router = useRouter()
@@ -134,7 +118,9 @@ function ChatContent() {
   const [companions, setCompanions] = useState<Companion[]>([])
   const [activeSlug, setActiveSlug] = useState('riya')
   const [activeConvId, setActiveConvId] = useState<number | null>(null)
-  const [conversations, setConversations] = useState<ConversationSummary[]>([])
+  // Map of slug → conversation list
+  const [convMap, setConvMap] = useState<Record<string, ConversationSummary[]>>({})
+  const [expandedSlug, setExpandedSlug] = useState<string>('riya')
   const [loadingConvs, setLoadingConvs] = useState(false)
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -147,35 +133,41 @@ function ChatContent() {
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const activeCompanion = companions.find((c) => c.slug === activeSlug) || null
+  const theme = COMPANION_THEME[activeSlug] || COMPANION_THEME['riya']
+  const conversations = convMap[activeSlug] || []
 
-  // Load companions
+  // Load companions on mount
   useEffect(() => {
     companionsApi.list().then(({ data }) => setCompanions(data)).catch(() => {})
   }, [])
 
-  // Fetch conversations list for current companion
-  const fetchConversations = (slug = activeSlug) => {
+  // Fetch conversation threads for a given slug
+  const fetchConversations = useCallback((slug: string) => {
     setLoadingConvs(true)
-    chatApi
-      .listConversations(slug)
-      .then(({ data }) => setConversations(data))
-      .catch(() => setConversations([]))
+    chatApi.listConversations(slug)
+      .then(({ data }) => setConvMap((prev) => ({ ...prev, [slug]: data })))
+      .catch(() => setConvMap((prev) => ({ ...prev, [slug]: [] })))
       .finally(() => setLoadingConvs(false))
-  }
+  }, [])
 
-  // Load old thread history
-  const loadConversation = async (convId: number) => {
+  // Fetch threads for all companions once companions load
+  useEffect(() => {
+    if (companions.length === 0) return
+    companions.forEach((c) => fetchConversations(c.slug))
+  }, [companions, fetchConversations])
+
+  // Load message history for a conversation thread
+  const loadConversation = async (convId: number, slug: string) => {
     if (streaming || convId === activeConvId) return
+    setActiveSlug(slug)
+    setExpandedSlug(slug)
     setActiveConvId(convId)
     setLoadingHistory(true)
     try {
       const { data } = await chatApi.getHistory(convId)
       setMessages(
         (data.messages || []).map((m: any) => ({
-          id: m.id,
-          role: m.role,
-          content: m.content,
-          created_at: m.created_at,
+          id: m.id, role: m.role, content: m.content, created_at: m.created_at,
         }))
       )
     } catch (err) {
@@ -186,26 +178,31 @@ function ChatContent() {
     }
   }
 
-  // Delete conversation thread
-  const deleteConversationThread = async (e: React.MouseEvent, convId: number) => {
+  // Delete a conversation thread
+  const deleteConversation = async (e: React.MouseEvent, convId: number, slug: string) => {
     e.stopPropagation()
     try {
       await chatApi.deleteConversation(convId)
-      setConversations((prev) => prev.filter((c) => c.id !== convId))
-      if (activeConvId === convId) {
-        startNewChat()
-      }
+      setConvMap((prev) => ({ ...prev, [slug]: (prev[slug] || []).filter((c) => c.id !== convId) }))
+      if (activeConvId === convId) startNewChat()
     } catch (err) {
       console.error('Failed to delete conversation', err)
     }
   }
 
-  // Reset & load conversations on companion switch
-  useEffect(() => {
-    setActiveConvId(null)
-    setMessages([])
-    fetchConversations(activeSlug)
-  }, [activeSlug])
+  // When selecting a persona from sidebar header
+  const selectPersona = (slug: string) => {
+    if (slug === expandedSlug) {
+      setExpandedSlug('')
+    } else {
+      setExpandedSlug(slug)
+    }
+    if (slug !== activeSlug) {
+      setActiveSlug(slug)
+      setActiveConvId(null)
+      setMessages([])
+    }
+  }
 
   // Mood check-in on first daily visit
   useEffect(() => {
@@ -217,7 +214,6 @@ function ChatContent() {
     }
   }, [])
 
-  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
@@ -227,12 +223,7 @@ function ChatContent() {
     if (!content || streaming) return
     if (!presetMessage) setInput('')
 
-    const userMsg: Message = {
-      id: Date.now(),
-      role: 'user',
-      content,
-      created_at: new Date().toISOString(),
-    }
+    const userMsg: Message = { id: Date.now(), role: 'user', content, created_at: new Date().toISOString() }
     setMessages((prev) => [...prev, userMsg])
     setStreaming(true)
 
@@ -251,7 +242,6 @@ function ChatContent() {
             setActiveConvId(data.conversation_id)
           }
           setMessages((prev) => prev.map((m) => (m.id === botMsgId ? { ...m, streaming: false } : m)))
-          // Refresh threads list after new conversation turn
           fetchConversations(activeSlug)
         } else if (data.token) {
           setMessages((prev) =>
@@ -270,15 +260,7 @@ function ChatContent() {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }
-
-  const handleLogout = () => {
-    logout()
-    router.push('/')
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
   }
 
   const startNewChat = () => {
@@ -288,239 +270,274 @@ function ChatContent() {
   }
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* ── Sidebar ── */}
-      {/* Mobile overlay */}
+    <div className="flex h-screen overflow-hidden bg-[#0d0d1a] text-white">
+
+      {/* ── Mobile overlay ── */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-on-surface/20 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
-      <aside
-        className={`flex flex-col h-full w-80 fixed left-0 top-0 bg-surface-container-low p-gutter gap-2 shadow-sm shadow-primary/10 z-50 transition-transform duration-300 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0`}
-      >
+
+      {/* ══════════════════════════════════════════
+          SIDEBAR
+      ══════════════════════════════════════════ */}
+      <aside className={`
+        flex flex-col h-full w-72 fixed left-0 top-0 z-50
+        bg-[#111127] border-r border-white/[0.06]
+        transition-transform duration-300
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
+      `}>
+
         {/* Logo */}
-        <div className="flex flex-col gap-1 mb-6 shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-primary text-3xl">psychology</span>
-            <h1 className="font-headline text-xl font-bold text-primary">Mind Mate</h1>
+        <div className="px-5 pt-6 pb-4 shrink-0">
+          <div className="flex items-center gap-2.5 mb-1">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
+              <span className="material-symbols-outlined text-white text-base" style={{ fontSize: '16px' }}>psychology</span>
+            </div>
+            <span className="font-headline text-lg font-bold text-white tracking-tight">Mind Mate</span>
           </div>
-          <p className="text-on-surface-variant font-label text-xs opacity-70">Your digital sanctuary</p>
+          <p className="text-white/30 text-xs font-label ml-10">Your digital sanctuary</p>
         </div>
 
-        {/* New Chat CTA */}
-        <button
-          onClick={startNewChat}
-          className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-label text-sm transition-all active:scale-95 hover:shadow-lg hover:shadow-primary/20 mb-4 shrink-0"
-        >
-          <span className="material-symbols-outlined">add</span>
-          New Conversation
-        </button>
-
-        {/* Personas Section */}
-        <div className="flex flex-col gap-2 shrink-0">
-          <h2 className="font-label text-xs text-on-surface-variant uppercase tracking-wider mb-1 px-2">
-            Personas
-          </h2>
-          <nav className="flex flex-col gap-1">
-            {companions.map((c) => (
-              <button
-                key={c.slug}
-                onClick={() => { setActiveSlug(c.slug); setSidebarOpen(false) }}
-                className={`persona-item flex items-center justify-between p-2.5 rounded-lg font-label text-sm transition-all hover:bg-surface-container-high text-left ${
-                  activeSlug === c.slug
-                    ? 'bg-secondary-container text-on-surface font-bold'
-                    : 'text-on-surface-variant'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined">
-                    {COMPANION_ICONS[c.slug] || 'face'}
-                  </span>
-                  <span>{c.display_name}</span>
-                </div>
-                <span className="material-symbols-outlined chevron-icon text-sm opacity-50">
-                  chevron_right
-                </span>
-              </button>
-            ))}
-          </nav>
+        {/* New Chat Button */}
+        <div className="px-3 mb-4 shrink-0">
+          <button
+            onClick={startNewChat}
+            className="flex items-center gap-2 w-full py-2.5 px-4 rounded-xl bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.08] text-white/70 hover:text-white font-label text-sm transition-all group"
+          >
+            <span className="material-symbols-outlined text-white/50 group-hover:text-white transition-colors" style={{ fontSize: '18px' }}>add</span>
+            New Conversation
+          </button>
         </div>
 
-        {/* Recent Threads Section */}
-        <div className="flex flex-col gap-2 flex-grow overflow-y-auto min-h-0 border-t border-outline-variant/20 pt-3 mt-2">
-          <div className="flex items-center justify-between px-2 mb-1">
-            <h2 className="font-label text-xs text-on-surface-variant uppercase tracking-wider">
-              Recent Threads
-            </h2>
-            {loadingConvs && (
-              <span className="material-symbols-outlined text-xs animate-spin text-primary">
-                progress_activity
-              </span>
-            )}
-          </div>
+        {/* Divider */}
+        <div className="mx-4 border-t border-white/[0.06] mb-3 shrink-0" />
 
-          {conversations.length === 0 ? (
-            <p className="font-label text-xs text-on-surface-variant/60 italic px-2 py-2">
-              No saved threads with {activeCompanion?.display_name || 'this companion'}.
-            </p>
-          ) : (
-            <nav className="flex flex-col gap-1 pr-1">
-              {conversations.map((conv) => (
-                <div
-                  key={conv.id}
-                  onClick={() => loadConversation(conv.id)}
-                  className={`group flex items-center justify-between p-2.5 rounded-lg text-xs font-label transition-all cursor-pointer ${
-                    activeConvId === conv.id
-                      ? 'bg-primary/10 text-primary font-semibold border border-primary/20'
-                      : 'text-on-surface-variant hover:bg-surface-container-high'
-                  }`}
+        {/* ── Persona List with Nested Threads ── */}
+        <div className="flex-1 overflow-y-auto px-2 pb-2 sidebar-scroll">
+          <p className="px-3 text-[10px] font-label uppercase tracking-widest text-white/25 mb-2">Companions</p>
+
+          {companions.map((c) => {
+            const cTheme = COMPANION_THEME[c.slug] || COMPANION_THEME['riya']
+            const cConvs = convMap[c.slug] || []
+            const isActive = activeSlug === c.slug
+            const isExpanded = expandedSlug === c.slug
+
+            return (
+              <div key={c.slug} className="mb-1">
+                {/* Persona Row */}
+                <button
+                  onClick={() => selectPersona(c.slug)}
+                  className={`
+                    w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all group
+                    ${isActive
+                      ? `${cTheme.bg} border ${cTheme.border}`
+                      : 'hover:bg-white/[0.05] border border-transparent'
+                    }
+                  `}
                 >
-                  <div className="flex items-center gap-2 truncate min-w-0 pr-1">
-                    <span className="material-symbols-outlined text-sm shrink-0">
-                      chat_bubble_outline
-                    </span>
-                    <span className="truncate">{conv.title}</span>
+                  {/* Avatar */}
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-lg shrink-0 ${isActive ? cTheme.bg : 'bg-white/[0.06]'} transition-all`}>
+                    {c.avatar_emoji}
                   </div>
-                  <button
-                    onClick={(e) => deleteConversationThread(e, conv.id)}
-                    title="Delete conversation"
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:text-error transition-opacity shrink-0"
-                  >
-                    <span className="material-symbols-outlined text-sm">delete</span>
-                  </button>
-                </div>
-              ))}
-            </nav>
-          )}
+
+                  {/* Name + tagline */}
+                  <div className="flex-1 min-w-0">
+                    <div className={`font-label text-sm font-medium truncate ${isActive ? 'text-white' : 'text-white/70'}`}>
+                      {c.display_name}
+                    </div>
+                    {cConvs.length > 0 && (
+                      <div className="text-[10px] text-white/30 font-label truncate">
+                        {cConvs.length} thread{cConvs.length !== 1 ? 's' : ''}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Active dot */}
+                  {isActive && <div className={`w-1.5 h-1.5 rounded-full ${cTheme.dot} shrink-0`} />}
+
+                  {/* Expand chevron */}
+                  {cConvs.length > 0 && (
+                    <span
+                      className={`material-symbols-outlined text-white/20 group-hover:text-white/40 transition-all ${isExpanded ? 'rotate-90' : ''}`}
+                      style={{ fontSize: '16px' }}
+                    >
+                      chevron_right
+                    </span>
+                  )}
+                </button>
+
+                {/* Nested Threads */}
+                {isExpanded && cConvs.length > 0 && (
+                  <div className="ml-4 mt-0.5 mb-1 pl-3 border-l border-white/[0.07] flex flex-col gap-0.5">
+                    {cConvs.map((conv) => (
+                      <div
+                        key={conv.id}
+                        onClick={() => loadConversation(conv.id, c.slug)}
+                        className={`
+                          group flex items-center justify-between px-2.5 py-1.5 rounded-lg cursor-pointer transition-all
+                          ${activeConvId === conv.id
+                            ? `${cTheme.bg} ${cTheme.accent} font-medium`
+                            : 'text-white/40 hover:text-white/70 hover:bg-white/[0.04]'
+                          }
+                        `}
+                      >
+                        <div className="flex items-center gap-2 truncate min-w-0">
+                          <span className="material-symbols-outlined shrink-0 opacity-50" style={{ fontSize: '13px' }}>chat_bubble_outline</span>
+                          <span className="text-xs font-label truncate">{conv.title}</span>
+                        </div>
+                        <button
+                          onClick={(e) => deleteConversation(e, conv.id, c.slug)}
+                          className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-red-400 transition-all shrink-0 ml-1"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>delete</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
 
-        {/* Footer nav */}
-        <div className="flex flex-col gap-1 pt-3 border-t border-outline-variant/30 shrink-0">
-          <button
-            onClick={() => router.push('/profile')}
-            className="flex items-center gap-3 p-2.5 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
-          >
-            <span className="material-symbols-outlined">person</span>
-            <span>Profile</span>
+        {/* Divider */}
+        <div className="mx-4 border-t border-white/[0.06] shrink-0" />
+
+        {/* Footer Nav */}
+        <div className="px-2 py-3 flex flex-col gap-0.5 shrink-0">
+          {/* User pill */}
+          <div className="flex items-center gap-3 px-3 py-2.5 mb-1">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+            </div>
+            <span className="text-white/50 font-label text-sm truncate">{user?.name || 'User'}</span>
+          </div>
+          <button onClick={() => router.push('/profile')} className="flex items-center gap-3 px-3 py-2 text-white/40 hover:text-white/70 rounded-lg hover:bg-white/[0.05] font-label text-sm transition-all">
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>person</span> Profile
           </button>
-          <button
-            onClick={() => setShowMood(true)}
-            className="flex items-center gap-3 p-2.5 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
-          >
-            <span className="material-symbols-outlined">mood</span>
-            <span>Mood Check</span>
+          <button onClick={() => setShowMood(true)} className="flex items-center gap-3 px-3 py-2 text-white/40 hover:text-white/70 rounded-lg hover:bg-white/[0.05] font-label text-sm transition-all">
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>mood</span> Mood Check
           </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 p-2.5 text-on-surface-variant rounded-lg transition-all hover:bg-surface-container-high font-label text-sm"
-          >
-            <span className="material-symbols-outlined">logout</span>
-            <span>Sign out</span>
+          <button onClick={() => { logout(); router.push('/') }} className="flex items-center gap-3 px-3 py-2 text-white/40 hover:text-red-400 rounded-lg hover:bg-red-500/[0.06] font-label text-sm transition-all">
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>logout</span> Sign out
           </button>
         </div>
       </aside>
 
-      {/* ── Main Area ── */}
-      <main className="flex flex-col h-screen flex-1 md:ml-80 relative bg-background">
-        {/* Decorative blobs */}
-        <div className="absolute top-1/4 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none z-0" />
-        <div className="absolute bottom-1/4 -left-24 w-96 h-96 bg-secondary/5 rounded-full blur-[100px] pointer-events-none z-0" />
+      {/* ══════════════════════════════════════════
+          MAIN AREA
+      ══════════════════════════════════════════ */}
+      <main className="flex flex-col flex-1 h-screen md:ml-72 relative">
 
-        {/* Top bar */}
-        <header className="flex justify-between items-center w-full px-5 md:px-10 py-3 bg-background sticky top-0 z-40 border-b border-outline-variant/10">
-          <div className="flex items-center gap-3">
+        {/* Ambient glow matching active persona */}
+        <div className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none opacity-20 ${
+          activeSlug === 'riya' ? 'bg-rose-500' :
+          activeSlug === 'arjun' ? 'bg-blue-500' :
+          activeSlug === 'alex' ? 'bg-amber-500' :
+          activeSlug === 'guide' ? 'bg-violet-500' : 'bg-emerald-500'
+        }`} />
+
+        {/* ── Dynamic Top Bar ── */}
+        <header className="flex items-center justify-between px-5 md:px-8 py-3 border-b border-white/[0.06] bg-[#0d0d1a]/80 backdrop-blur-md sticky top-0 z-40 shrink-0">
+          {/* Left: hamburger + companion info */}
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-white/[0.08] text-white/40 hover:text-white/70 transition-all"
             >
               <span className="material-symbols-outlined">menu</span>
             </button>
-            <div className="hidden md:block">
-              <h2 className="font-headline text-lg text-on-surface font-semibold">
-                Mind Mate Assistant
-              </h2>
-            </div>
-            <div className="md:hidden font-headline text-lg font-bold text-primary">Mind Mate</div>
+
+            {activeCompanion ? (
+              <div className="flex items-center gap-3">
+                {/* Companion avatar */}
+                <div className={`w-9 h-9 rounded-xl ${theme.bg} flex items-center justify-center text-xl border ${theme.border}`}>
+                  {activeCompanion.avatar_emoji}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-headline text-base font-semibold text-white leading-none">
+                      {activeCompanion.display_name}
+                    </h2>
+                    {/* Online dot */}
+                    <div className={`w-1.5 h-1.5 rounded-full ${theme.dot} animate-pulse`} />
+                  </div>
+                  <p className={`text-xs font-label mt-0.5 ${theme.accent} opacity-80`}>
+                    {COMPANION_STATUS[activeSlug]}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="h-9 w-40 rounded-xl bg-white/[0.05] animate-pulse" />
+            )}
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* Right: history + new chat */}
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => setSidebarOpen((prev) => !prev)}
-              title="Toggle Thread History"
-              className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
+              onClick={startNewChat}
+              title="New conversation"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.08] text-white/50 hover:text-white font-label text-xs transition-all"
             >
-              <span className="material-symbols-outlined">history</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>
+              <span className="hidden sm:inline">New chat</span>
             </button>
-            <div className="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-label text-sm font-bold">
-              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-            </div>
+            {loadingConvs && (
+              <span className="material-symbols-outlined text-white/30 animate-spin" style={{ fontSize: '18px' }}>progress_activity</span>
+            )}
           </div>
         </header>
 
-        {/* Messages / Loading / Empty state */}
-        <section className="flex-grow flex flex-col items-center justify-center px-5 md:px-10 overflow-y-auto chat-container z-10">
+        {/* ── Messages ── */}
+        <section className="flex-1 overflow-y-auto px-5 md:px-10 chat-container">
           {loadingHistory ? (
-            <div className="flex flex-col items-center gap-3 text-primary animate-pulse py-12">
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-white/30">
               <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
-              <p className="font-label text-sm">Loading conversation history...</p>
+              <p className="font-label text-sm">Loading conversation...</p>
             </div>
           ) : messages.length === 0 ? (
-            <div className="max-w-chat-width w-full flex flex-col items-center text-center fade-in py-12">
-              <div className="w-24 h-24 mb-8 bg-primary/10 rounded-full flex items-center justify-center">
-                <span
-                  className="material-symbols-outlined text-primary text-5xl"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  spa
-                </span>
+            <div className="flex flex-col items-center justify-center h-full text-center fade-in px-4">
+              {/* Persona greeting */}
+              <div className={`w-20 h-20 mb-6 rounded-2xl ${theme.bg} border ${theme.border} flex items-center justify-center text-5xl shadow-2xl`}>
+                {activeCompanion?.avatar_emoji || '🧘'}
               </div>
-              <h3 className="font-headline text-3xl md:text-4xl text-on-surface mb-4">
-                Hi, I&apos;m here to listen.
+              <h3 className="font-headline text-3xl text-white mb-2">
+                Hey, I&apos;m {activeCompanion?.display_name || 'here'}.
               </h3>
-              <p className="font-body text-lg text-on-surface-variant max-w-md">
-                Which persona would you like to talk to today?
+              <p className="font-body text-white/40 text-base max-w-sm mb-12">
+                {activeCompanion?.tagline || 'What would you like to talk about today?'}
               </p>
-              <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+              {/* Quick action grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-2xl">
                 {QUICK_ACTIONS.map((a) => (
                   <button
                     key={a.label}
                     onClick={() => sendMessage(a.prompt)}
-                    className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 hover:border-primary/30 hover:bg-white transition-all group"
+                    className={`p-4 rounded-2xl border ${theme.border} ${theme.bg} hover:brightness-125 transition-all group text-left`}
                   >
-                    <span
-                      className="material-symbols-outlined text-primary mb-2 block group-hover:scale-110 transition-transform"
-                    >
-                      {a.icon}
-                    </span>
-                    <span className="font-label text-sm">{a.label}</span>
+                    <span className={`material-symbols-outlined ${theme.accent} mb-2 block group-hover:scale-110 transition-transform`}>{a.icon}</span>
+                    <span className="font-label text-sm text-white/70">{a.label}</span>
                   </button>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="w-full max-w-chat-width flex flex-col gap-6 py-8">
+            <div className="max-w-3xl mx-auto flex flex-col gap-6 py-8">
               {messages.map((msg, i) =>
                 msg.role === 'user' ? (
                   <div key={msg.id || i} className="flex justify-end fade-in">
-                    <div className="bg-primary text-on-primary p-4 rounded-3xl rounded-tr-sm max-w-[80%] font-body text-base leading-relaxed">
+                    <div className={`${theme.bubble} text-white px-5 py-3.5 rounded-3xl rounded-tr-md max-w-[78%] font-body text-base leading-relaxed shadow-lg`}>
                       {msg.content}
                     </div>
                   </div>
                 ) : (
-                  <div key={msg.id || i} className="flex items-start gap-4 fade-in">
-                    <div className="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-on-surface text-sm">
-                        {COMPANION_ICONS[activeSlug] || 'face'}
-                      </span>
+                  <div key={msg.id || i} className="flex items-start gap-3 fade-in">
+                    <div className={`w-8 h-8 rounded-xl ${theme.bg} border ${theme.border} flex items-center justify-center text-base shrink-0 mt-0.5`}>
+                      {activeCompanion?.avatar_emoji || '🧘'}
                     </div>
-                    <div
-                      className={`bg-secondary-container/30 text-on-surface p-4 rounded-3xl rounded-tl-sm border border-secondary-container/50 max-w-[80%] font-body text-base leading-relaxed prose-bubble ${
-                        msg.streaming ? 'after:content-["▋"] after:animate-pulse after:text-primary' : ''
-                      }`}
-                    >
+                    <div className={`bg-white/[0.05] border border-white/[0.08] text-white/90 px-5 py-3.5 rounded-3xl rounded-tl-md max-w-[78%] font-body text-base leading-relaxed prose-bubble ${
+                      msg.streaming ? 'after:content-["▋"] after:animate-pulse after:text-white/40' : ''
+                    }`}>
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
                   </div>
@@ -531,10 +548,10 @@ function ChatContent() {
           )}
         </section>
 
-        {/* Input bar */}
-        <footer className="w-full flex justify-center p-gutter bg-gradient-to-t from-background via-background to-transparent sticky bottom-0 z-10">
-          <div className="max-w-chat-width w-full relative">
-            <div className="relative flex items-center">
+        {/* ── Input Bar ── */}
+        <footer className="px-5 md:px-10 pb-6 pt-3 bg-gradient-to-t from-[#0d0d1a] via-[#0d0d1a]/95 to-transparent shrink-0">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center gap-2 bg-white/[0.06] border border-white/[0.1] rounded-2xl px-4 py-3 focus-within:border-white/20 transition-all shadow-xl">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -543,41 +560,36 @@ function ChatContent() {
                 placeholder={`Message ${activeCompanion?.display_name || 'Mind Mate'}...`}
                 rows={1}
                 disabled={streaming}
-                className="w-full min-h-[64px] pl-14 pr-20 py-5 bg-white border-none rounded-full shadow-[0_8px_30px_rgb(9,76,178,0.08)] focus:ring-2 focus:ring-primary/20 font-body text-base placeholder:text-on-surface-variant/40 transition-shadow resize-none outline-none leading-6 overflow-hidden disabled:opacity-60"
-                style={{ height: 'auto' }}
+                className="flex-1 bg-transparent text-white placeholder:text-white/25 font-body text-sm resize-none outline-none leading-6 disabled:opacity-50 max-h-48 overflow-y-auto"
                 onInput={(e) => {
-                  const target = e.target as HTMLTextAreaElement
-                  target.style.height = 'auto'
-                  target.style.height = Math.min(target.scrollHeight, 200) + 'px'
+                  const t = e.target as HTMLTextAreaElement
+                  t.style.height = 'auto'
+                  t.style.height = Math.min(t.scrollHeight, 192) + 'px'
                 }}
               />
-              <div className="absolute left-4 flex items-center justify-center">
-                <button className="p-2 text-on-surface-variant/60 hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined">attach_file</span>
-                </button>
-              </div>
-              <div className="absolute right-3 flex items-center gap-2">
-                <button className="p-2 text-on-surface-variant/60 hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined">mic</span>
-                </button>
-                <button
-                  onClick={() => sendMessage()}
-                  disabled={!input.trim() || streaming}
-                  className="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                  <span className="material-symbols-outlined text-sm">
-                    {streaming ? 'more_horiz' : 'arrow_upward'}
-                  </span>
-                </button>
-              </div>
+              <button
+                onClick={() => sendMessage()}
+                disabled={!input.trim() || streaming}
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all shrink-0 ${
+                  input.trim() && !streaming
+                    ? `${theme.bubble} text-white shadow-lg hover:brightness-110 active:scale-95`
+                    : 'bg-white/[0.06] text-white/20 cursor-not-allowed'
+                }`}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                  {streaming ? 'more_horiz' : 'arrow_upward'}
+                </span>
+              </button>
             </div>
+
+            {/* Suggestion chips — only on empty state */}
             {messages.length === 0 && (
-              <div className="mt-4 flex justify-center gap-3">
-                {['Tell me a story', 'Help me relax'].map((p) => (
+              <div className="mt-3 flex justify-center gap-2 flex-wrap">
+                {['Tell me a story 📖', 'Help me relax 🌿', 'I need to vent 💬'].map((p) => (
                   <button
                     key={p}
                     onClick={() => sendMessage(p)}
-                    className="px-4 py-1.5 bg-surface-container-high/50 text-on-surface-variant/70 font-label text-xs rounded-full border border-outline-variant/20 hover:bg-white cursor-pointer transition-colors"
+                    className="px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-white/35 hover:text-white/60 font-label text-xs rounded-full border border-white/[0.07] transition-all"
                   >
                     {p}
                   </button>
