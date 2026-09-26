@@ -30,13 +30,13 @@ interface ConversationSummary {
   updated_at?: string
 }
 
-// Per-companion accent colours for dynamic theming
+// Per-companion hues, blended into the sanctuary — washes and hairlines only
 const COMPANION_THEME: Record<string, { accent: string; bg: string; border: string; bubble: string; dot: string }> = {
-  riya:  { accent: 'text-rose-400',   bg: 'bg-rose-500/10',   border: 'border-rose-400/30',  bubble: 'bg-rose-500',   dot: 'bg-rose-400'   },
-  arjun: { accent: 'text-blue-400',   bg: 'bg-blue-500/10',   border: 'border-blue-400/30',  bubble: 'bg-blue-500',   dot: 'bg-blue-400'   },
-  alex:  { accent: 'text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-400/30', bubble: 'bg-amber-500',  dot: 'bg-amber-400'  },
-  guide: { accent: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-400/30',bubble: 'bg-violet-500', dot: 'bg-violet-400' },
-  squad: { accent: 'text-emerald-400',bg: 'bg-emerald-500/10',border: 'border-emerald-400/30',bubble:'bg-emerald-500',dot: 'bg-emerald-400' },
+  riya:  { accent: 'text-persona-riya',   bg: 'bg-persona-riya/10',   border: 'border-persona-riya/30',  bubble: 'bg-sanctuary-mauve/20 border border-sanctuary-mauve/30',   dot: 'bg-persona-riya'   },
+  arjun: { accent: 'text-persona-arjun',  bg: 'bg-persona-arjun/10',  border: 'border-persona-arjun/30', bubble: 'bg-sanctuary-mauve/20 border border-sanctuary-mauve/30',   dot: 'bg-persona-arjun'  },
+  alex:  { accent: 'text-persona-alex',   bg: 'bg-persona-alex/10',   border: 'border-persona-alex/30',  bubble: 'bg-sanctuary-mauve/20 border border-sanctuary-mauve/30',   dot: 'bg-persona-alex'   },
+  guide: { accent: 'text-persona-guide',  bg: 'bg-persona-guide/10',  border: 'border-persona-guide/30', bubble: 'bg-sanctuary-mauve/20 border border-sanctuary-mauve/30',   dot: 'bg-persona-guide'   },
+  squad: { accent: 'text-persona-squad',  bg: 'bg-persona-squad/10',  border: 'border-persona-squad/30', bubble: 'bg-sanctuary-mauve/20 border border-sanctuary-mauve/30',   dot: 'bg-persona-squad'   },
 }
 
 const COMPANION_STATUS: Record<string, string> = {
@@ -68,7 +68,7 @@ function MoodModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-2xl p-8 bg-[#1a1a2e] border border-white/10 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-sm rounded-3xl p-8 bg-sanctuary-panel border border-white/10 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         {saved ? (
           <div className="text-center text-white font-headline text-xl py-4">✅ Mood logged! 💙</div>
         ) : (
@@ -78,18 +78,18 @@ function MoodModal({ onClose }: { onClose: () => void }) {
             <div className="text-center font-label text-sm text-white/50 mb-4">{score} / 10</div>
             <input type="range" min={1} max={10} step={0.5} value={score}
               onChange={(e) => setScore(parseFloat(e.target.value))}
-              className="w-full accent-violet-500 mb-6" />
+              className="w-full accent-sanctuary-mauve mb-6" />
             <div className="flex flex-wrap gap-2 mb-6">
               {suggestions.map((s) => (
                 <button key={s} onClick={() => setTag((t) => (t === s ? '' : s))}
                   className={`px-3 py-1 rounded-full font-label text-xs border transition-all ${
-                    tag === s ? 'bg-violet-500 text-white border-violet-500' : 'border-white/20 text-white/60 hover:border-violet-400/50'
+                    tag === s ? 'bg-sanctuary-mauve text-white border-sanctuary-mauve' : 'border-white/20 text-white/60 hover:border-sanctuary-terra/50'
                   }`}>
                   {s}
                 </button>
               ))}
             </div>
-            <button onClick={save} className="w-full bg-violet-500 hover:bg-violet-400 text-white py-3 rounded-full font-label text-sm uppercase tracking-widest mb-3 transition-all">
+            <button onClick={save} className="w-full bg-sanctuary-mauve hover:bg-sanctuary-terra text-white py-3 rounded-full font-label text-sm uppercase tracking-widest mb-3 transition-all">
               Save 💙
             </button>
             <button onClick={onClose} className="w-full py-3 rounded-full font-label text-sm text-white/40 hover:text-white/70 transition-all">
@@ -234,20 +234,42 @@ function ChatContent() {
     ])
 
     try {
+      // Paced reveal: buffer raw SSE tokens, flush whole words ~every 60ms
+      // so the reply reads as present, not a jittery typewriter.
       const stream = chatApi.stream(content, activeSlug, activeConvId)
-      for await (const data of stream) {
-        if (data.done) {
-          setStreaming(false)
-          if (data.conversation_id && data.conversation_id !== activeConvId) {
-            setActiveConvId(data.conversation_id)
-          }
-          setMessages((prev) => prev.map((m) => (m.id === botMsgId ? { ...m, streaming: false } : m)))
-          fetchConversations(activeSlug)
-        } else if (data.token) {
-          setMessages((prev) =>
-            prev.map((m) => (m.id === botMsgId ? { ...m, content: m.content + data.token } : m))
-          )
+      let buffer = ''
+      const commit = (text: string) => {
+        if (!text) return
+        setMessages((prev) =>
+          prev.map((m) => (m.id === botMsgId ? { ...m, content: m.content + text } : m))
+        )
+      }
+      const flusher = setInterval(() => {
+        const boundary = buffer.search(/\s\S*$/)
+        if (boundary > 0) {
+          commit(buffer.slice(0, boundary))
+          buffer = buffer.slice(boundary)
+        } else if (buffer.length > 120) {
+          commit(buffer) // long unbroken run (e.g. code) — don't stall
+          buffer = ''
         }
+      }, 60)
+      try {
+        for await (const data of stream) {
+          if (data.done) {
+            setStreaming(false)
+            if (data.conversation_id && data.conversation_id !== activeConvId) {
+              setActiveConvId(data.conversation_id)
+            }
+            setMessages((prev) => prev.map((m) => (m.id === botMsgId ? { ...m, streaming: false } : m)))
+            fetchConversations(activeSlug)
+          } else if (data.token) {
+            buffer += data.token
+          }
+        }
+      } finally {
+        clearInterval(flusher)
+        commit(buffer)
       }
     } catch {
       setStreaming(false)
@@ -270,7 +292,7 @@ function ChatContent() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#0d0d1a] text-white">
+    <div className="flex h-screen overflow-hidden bg-sanctuary-ground text-white">
 
       {/* ── Mobile overlay ── */}
       {sidebarOpen && (
@@ -282,7 +304,7 @@ function ChatContent() {
       ══════════════════════════════════════════ */}
       <aside className={`
         flex flex-col h-full w-72 fixed left-0 top-0 z-50
-        bg-[#111127] border-r border-white/[0.06]
+        bg-sanctuary-panel border-r border-white/[0.06]
         transition-transform duration-300
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
       `}>
@@ -290,7 +312,7 @@ function ChatContent() {
         {/* Logo */}
         <div className="px-5 pt-6 pb-4 shrink-0">
           <div className="flex items-center gap-2.5 mb-1">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sanctuary-mauve to-sanctuary-terra flex items-center justify-center shadow-lg shadow-sanctuary-mauve/20">
               <span className="material-symbols-outlined text-white text-base" style={{ fontSize: '16px' }}>psychology</span>
             </div>
             <span className="font-headline text-lg font-bold text-white tracking-tight">Mind Mate</span>
@@ -407,7 +429,7 @@ function ChatContent() {
         <div className="px-2 py-3 flex flex-col gap-0.5 shrink-0">
           {/* User pill */}
           <div className="flex items-center gap-3 px-3 py-2.5 mb-1">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-sanctuary-mauve to-sanctuary-terra flex items-center justify-center text-white text-xs font-bold shrink-0">
               {user?.name?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <span className="text-white/50 font-label text-sm truncate">{user?.name || 'User'}</span>
@@ -429,16 +451,12 @@ function ChatContent() {
       ══════════════════════════════════════════ */}
       <main className="flex flex-col flex-1 h-screen md:ml-72 relative">
 
-        {/* Ambient glow matching active persona */}
-        <div className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none opacity-20 ${
-          activeSlug === 'riya' ? 'bg-rose-500' :
-          activeSlug === 'arjun' ? 'bg-blue-500' :
-          activeSlug === 'alex' ? 'bg-amber-500' :
-          activeSlug === 'guide' ? 'bg-violet-500' : 'bg-emerald-500'
-        }`} />
+        {/* Soft sanctuary washes matching active persona */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none opacity-25 bg-sanctuary-mauve/20" />
+        <div className="absolute bottom-0 left-0 w-[420px] h-[420px] rounded-full blur-[140px] pointer-events-none opacity-20 bg-sanctuary-terra/10" />
 
         {/* ── Dynamic Top Bar ── */}
-        <header className="flex items-center justify-between px-5 md:px-8 py-3 border-b border-white/[0.06] bg-[#0d0d1a]/80 backdrop-blur-md sticky top-0 z-40 shrink-0">
+        <header className="flex items-center justify-between px-5 md:px-8 py-3 border-b border-white/[0.06] bg-sanctuary-ground/80 backdrop-blur-md sticky top-0 z-40 shrink-0">
           {/* Left: hamburger + companion info */}
           <div className="flex items-center gap-4">
             <button
@@ -536,7 +554,7 @@ function ChatContent() {
                       {activeCompanion?.avatar_emoji || '🧘'}
                     </div>
                     <div className={`bg-white/[0.05] border border-white/[0.08] text-white/90 px-5 py-3.5 rounded-3xl rounded-tl-md max-w-[78%] font-body text-base leading-relaxed prose-bubble ${
-                      msg.streaming ? 'after:content-["▋"] after:animate-pulse after:text-white/40' : ''
+                      msg.streaming ? 'stream-cursor' : ''
                     }`}>
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>

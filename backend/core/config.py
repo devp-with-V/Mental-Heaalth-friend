@@ -13,11 +13,13 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     # Single default model (kept for backward compatibility).
-    OPENROUTER_MODEL: str = "mistralai/mistral-7b-instruct:free"
+    OPENROUTER_MODEL: str = "google/gemma-4-26b-a4b-it:free"
     # Ordered fallback chain, smartest/preferred first, comma-separated.
     # If a model is unavailable, rate-limited, or errors, the next one is tried.
     # Falls back to OPENROUTER_MODEL if left empty.
-    OPENROUTER_MODELS: str = "mistralai/mistral-7b-instruct:free"
+    # NOTE: free-model slugs rotate — verify live slugs at
+    # https://openrouter.ai/api/v1/models before deploying.
+    OPENROUTER_MODELS: str = "google/gemma-4-26b-a4b-it:free,qwen/qwen3.8-27b:free,nvidia/nemotron-3-super-120b-a12b:free"
 
     # Database
     DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/mindmate"

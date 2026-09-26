@@ -20,6 +20,42 @@
   font-feature-settings: 'liga';
 }
 
+/* ── Sanctuary texture: film grain over the whole app ── */
+.sanctuary-grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
+
+/* ── Streaming chunk reveal: soft rise per flushed word-group ── */
+@keyframes stream-rise {
+  from { opacity: 0.35; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.stream-chunk {
+  display: inline;
+  animation: stream-rise 0.45s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .stream-chunk { animation: none; }
+}
+
+/* Breathing presence cursor while the companion is replying */
+.stream-cursor::after {
+  content: '▋';
+  margin-left: 2px;
+  color: #c98a6b;
+  animation: cursor-breathe 1.6s ease-in-out infinite;
+}
+@keyframes cursor-breathe {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.15; }
+}
+
 /* Font helpers */
 .font-headline {
   font-family: var(--font-noto-serif), serif;
@@ -109,8 +145,14 @@
   background-color: #094cb2;
 }
 
-/* Markdown prose in chat bubbles */
-.prose-bubble p { margin: 0; }
+/* Markdown prose in chat bubbles — serif voice for the companion */
+.prose-bubble {
+  font-family: var(--font-noto-serif), Georgia, serif;
+  font-size: 1.02rem;
+  line-height: 1.75;
+}
+.prose-bubble p { margin: 0 0 0.6em; }
+.prose-bubble p:last-child { margin-bottom: 0; }
 .prose-bubble ul { padding-left: 1.2em; }
 .prose-bubble ol { padding-left: 1.2em; }
 .prose-bubble strong { font-weight: 600; }

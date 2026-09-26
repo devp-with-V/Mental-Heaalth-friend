@@ -28,10 +28,10 @@ interface ChartEntry extends MoodLog {
 }
 
 const MOOD_LABEL = (s: number) => {
-  if (s <= 3) return { label: 'Rough', color: '#f87171' }
-  if (s <= 5) return { label: 'Okay', color: '#fbbf24' }
-  if (s <= 7) return { label: 'Good', color: '#a78bfa' }
-  return { label: 'Great', color: '#6ee7b7' }
+  if (s <= 3) return { label: 'Rough', color: '#c98a94' }
+  if (s <= 5) return { label: 'Okay', color: '#c9a26b' }
+  if (s <= 7) return { label: 'Good', color: '#9db89a' }
+  return { label: 'Great', color: '#8f7aa8' }
 }
 
 const CustomDot = (props: { cx?: number; cy?: number; payload?: MoodLog }) => {
@@ -52,28 +52,28 @@ const CustomTooltip = ({
   const d = payload[0].payload
   const { label, color } = MOOD_LABEL(d.mood_score)
   return (
-    <div className="bg-surface border border-outline-variant/30 rounded-xl p-3 shadow-lg text-sm">
+    <div className="bg-sanctuary-panel-2 border border-white/10 rounded-xl p-3 shadow-lg text-sm">
       <div style={{ color, fontWeight: 600 }}>
         {label} · {d.mood_score}/10
       </div>
       {d.emotion_tag && (
-        <div className="text-on-surface-variant text-xs">{d.emotion_tag}</div>
+        <div className="text-white/50 text-xs">{d.emotion_tag}</div>
       )}
-      <div className="text-outline text-xs mt-1">
+      <div className="text-white/30 text-xs mt-1">
         {new Date(d.created_at).toLocaleDateString()}
       </div>
     </div>
   )
 }
 
-// Activity heatmap mock (same visual as new.html profile)
+// Activity heatmap in the sage ritual scale
 function ConsistencyHeatmap({ count }: { count: number }) {
   const colors = [
-    'bg-outline-variant/10',
-    'bg-primary/20',
-    'bg-primary/40',
-    'bg-primary/60',
-    'bg-primary',
+    'bg-white/[0.05]',
+    'bg-sanctuary-sage/20',
+    'bg-sanctuary-sage/40',
+    'bg-sanctuary-sage/60',
+    'bg-sanctuary-sage',
   ]
   const cells = Array.from({ length: 35 }).map((_, i) => ({
     key: i,
@@ -125,12 +125,12 @@ function ProfileContent() {
   }
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex flex-col">
+    <div className="bg-sanctuary-ground text-sanctuary-ink min-h-screen flex flex-col">
       {/* Header */}
-      <header className="w-full top-0 sticky z-50 bg-surface-container-low transition-colors duration-300">
+      <header className="w-full top-0 sticky z-50 bg-sanctuary-ground/85 backdrop-blur-md border-b border-white/[0.06] transition-colors duration-300">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto w-full">
           <div
-            className="font-headline text-2xl font-bold text-primary cursor-pointer"
+            className="font-headline text-2xl font-bold text-sanctuary-terra cursor-pointer"
             onClick={() => router.push('/chat')}
           >
             Mind Mate
@@ -138,7 +138,7 @@ function ProfileContent() {
           <nav className="hidden md:flex items-center space-x-10">
             <button
               onClick={() => router.push('/chat')}
-              className="font-label text-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+              className="font-label text-sm uppercase tracking-wider text-white/45 hover:text-white/80 transition-colors"
             >
               ← Back to Chat
             </button>
@@ -146,13 +146,13 @@ function ProfileContent() {
           <div className="flex items-center space-x-6">
             <button
               onClick={handleLogout}
-              className="font-label text-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+              className="font-label text-sm uppercase tracking-wider text-white/45 hover:text-white/80 transition-colors"
             >
               Sign Out
             </button>
             <button
               onClick={() => router.push('/chat')}
-              className="bg-primary text-on-primary px-5 py-2 rounded-lg font-label text-sm uppercase tracking-wider font-bold transition-transform active:scale-95 shadow-sm"
+              className="bg-sanctuary-terra text-[#1d1410] px-5 py-2 rounded-full font-label text-sm uppercase tracking-wider font-bold transition-all hover:brightness-110 active:scale-95"
             >
               Open Chat
             </button>
@@ -164,47 +164,47 @@ function ProfileContent() {
         {/* Profile Header */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-20">
           <div className="lg:col-span-4">
-            <div className="aspect-square w-full max-w-[320px] rounded-xl overflow-hidden shadow-2xl bg-primary/10 flex items-center justify-center">
-              <span className="font-headline text-9xl text-primary">
+            <div className="aspect-square w-full max-w-[320px] rounded-3xl overflow-hidden shadow-2xl bg-sanctuary-mauve/10 border border-white/[0.07] flex items-center justify-center">
+              <span className="font-headline text-9xl text-sanctuary-mauve">
                 {user?.name?.[0]?.toUpperCase() || 'U'}
               </span>
             </div>
           </div>
           <div className="lg:col-span-8">
             <div className="flex items-center gap-4 mb-4">
-              <span className="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full font-label text-xs uppercase tracking-widest font-bold">
+              <span className="bg-sanctuary-sage/10 border border-sanctuary-sage/30 text-sanctuary-sage px-3 py-1 rounded-full font-label text-xs uppercase tracking-widest font-bold">
                 Member
               </span>
-              <span className="text-outline font-label text-xs uppercase tracking-widest">
+              <span className="text-white/30 font-label text-xs uppercase tracking-widest">
                 {user?.email}
               </span>
             </div>
-            <h1 className="font-display text-5xl md:text-7xl mb-6 text-on-surface leading-tight">
+            <h1 className="font-headline text-5xl md:text-7xl mb-6 text-sanctuary-ink leading-tight">
               {user?.name}
             </h1>
-            <p className="font-body text-xl text-on-surface-variant max-w-2xl leading-relaxed italic">
-              &quot;Exploring the intersection of emotional clarity and daily wellbeing.&quot;
+            <p className="font-headline text-xl text-white/45 max-w-2xl leading-relaxed italic">
+              &quot;Tending the inner weather, one evening at a time.&quot;
             </p>
             <div className="flex gap-8 mt-10">
               <div>
-                <div className="font-display text-3xl text-primary font-bold">{moodLogs.length}</div>
-                <div className="font-label text-xs uppercase tracking-widest text-outline">
+                <div className="font-headline text-3xl text-sanctuary-terra font-bold">{moodLogs.length}</div>
+                <div className="font-label text-xs uppercase tracking-widest text-white/30">
                   Check-ins
                 </div>
               </div>
-              <div className="border-l border-outline-variant opacity-30" />
+              <div className="border-l border-white/10" />
               <div>
-                <div className="font-display text-3xl text-primary font-bold">{avgMood}</div>
-                <div className="font-label text-xs uppercase tracking-widest text-outline">
+                <div className="font-headline text-3xl text-sanctuary-terra font-bold">{avgMood}</div>
+                <div className="font-label text-xs uppercase tracking-widest text-white/30">
                   Avg Mood (30d)
                 </div>
               </div>
-              <div className="border-l border-outline-variant opacity-30" />
+              <div className="border-l border-white/10" />
               <div>
-                <div className="font-display text-3xl font-bold" style={{ color: avgColor }}>
+                <div className="font-headline text-3xl font-bold" style={{ color: avgColor }}>
                   {avgLabel}
                 </div>
-                <div className="font-label text-xs uppercase tracking-widest text-outline">
+                <div className="font-label text-xs uppercase tracking-widest text-white/30">
                   Mood Level
                 </div>
               </div>
@@ -215,24 +215,24 @@ function ProfileContent() {
         {/* Bento Grid */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
           {/* Active Persona */}
-          <div className="md:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between group transition-all hover:bg-surface-container-high duration-300">
+          <div className="md:col-span-2 bg-sanctuary-panel border border-white/[0.07] rounded-3xl p-8 flex flex-col justify-between group transition-all hover:border-white/[0.12] duration-300">
             <div className="flex justify-between items-start mb-12">
               <div>
-                <h3 className="font-label text-xs uppercase tracking-widest text-tertiary font-bold mb-2">
+                <h3 className="font-label text-xs uppercase tracking-widest text-sanctuary-sage font-bold mb-2">
                   Current Active Persona
                 </h3>
-                <h2 className="font-display text-4xl text-on-surface">
+                <h2 className="font-headline text-4xl text-sanctuary-ink">
                   {user?.persona_name || 'Choose a Companion'}
                 </h2>
               </div>
-              <div className="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+              <div className="w-16 h-16 rounded-2xl bg-sanctuary-mauve/10 border border-sanctuary-mauve/30 flex items-center justify-center text-sanctuary-mauve">
                 <span className="material-symbols-outlined text-3xl">psychology</span>
               </div>
             </div>
             <div className="mt-10 flex gap-4">
               <button
                 onClick={() => router.push('/chat')}
-                className="bg-primary text-on-primary px-6 py-3 rounded-lg font-label text-sm uppercase font-bold tracking-wider hover:opacity-90 transition-opacity"
+                className="bg-sanctuary-terra text-[#1d1410] px-6 py-3 rounded-full font-label text-sm uppercase font-bold tracking-wider hover:brightness-110 transition-all"
               >
                 Resume Session
               </button>
@@ -240,30 +240,30 @@ function ProfileContent() {
           </div>
 
           {/* Consistency Heatmap */}
-          <div className="bg-surface-container-low rounded-xl p-8 flex flex-col">
-            <h3 className="font-label text-xs uppercase tracking-widest text-outline font-bold mb-6">
+          <div className="bg-sanctuary-panel border border-white/[0.07] rounded-3xl p-8 flex flex-col">
+            <h3 className="font-label text-xs uppercase tracking-widest text-white/30 font-bold mb-6">
               Consistency Ritual
             </h3>
             <div className="flex-grow flex items-center justify-center">
               <ConsistencyHeatmap count={moodLogs.length} />
             </div>
-            <div className="mt-6 flex justify-between text-[10px] uppercase font-label text-outline tracking-tighter">
+            <div className="mt-6 flex justify-between text-[10px] uppercase font-label text-white/30 tracking-tighter">
               <span>Last 5 weeks</span>
               <span>Streak: {moodLogs.length > 0 ? `${Math.min(moodLogs.length, 12)} Days` : '—'}</span>
             </div>
           </div>
 
           {/* Mood Chart */}
-          <div className="bg-surface-container-low rounded-xl p-8 md:col-span-2">
-            <h3 className="font-label text-xs uppercase tracking-widest text-outline font-bold mb-6">
+          <div className="bg-sanctuary-panel border border-white/[0.07] rounded-3xl p-8 md:col-span-2">
+            <h3 className="font-label text-xs uppercase tracking-widest text-white/30 font-bold mb-6">
               Mood Over Time
             </h3>
             {loading ? (
-              <div className="flex items-center justify-center h-40 text-outline font-body text-sm">
+              <div className="flex items-center justify-center h-40 text-white/30 font-body text-sm">
                 Loading...
               </div>
             ) : moodLogs.length === 0 ? (
-              <div className="flex items-center justify-center h-40 text-on-surface-variant font-body text-sm text-center">
+              <div className="flex items-center justify-center h-40 text-white/45 font-body text-sm text-center">
                 No mood data yet. Log your first check-in in the chat! 🌡️
               </div>
             ) : (
@@ -271,20 +271,20 @@ function ProfileContent() {
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="moodGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#094cb2" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#094cb2" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#9db89a" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#9db89a" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(236,229,218,0.06)" />
                   <XAxis
                     dataKey="date"
-                    tick={{ fill: '#737784', fontSize: 11 }}
+                    tick={{ fill: 'rgba(236,229,218,0.4)', fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis
                     domain={[1, 10]}
-                    tick={{ fill: '#737784', fontSize: 11 }}
+                    tick={{ fill: 'rgba(236,229,218,0.4)', fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                   />
@@ -292,7 +292,7 @@ function ProfileContent() {
                   <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="#094cb2"
+                    stroke="#9db89a"
                     strokeWidth={2}
                     fill="url(#moodGrad)"
                     dot={<CustomDot />}
@@ -303,23 +303,23 @@ function ProfileContent() {
           </div>
 
           {/* Privacy Card */}
-          <div className="bg-surface-dim rounded-xl p-8 flex flex-col justify-between">
+          <div className="bg-sanctuary-panel-2 border border-white/[0.07] rounded-3xl p-8 flex flex-col justify-between">
             <div>
-              <h3 className="font-label text-xs uppercase tracking-widest text-on-surface font-bold mb-4">
+              <h3 className="font-label text-xs uppercase tracking-widest text-sanctuary-ink font-bold mb-4">
                 Mind Shield
               </h3>
-              <p className="font-body text-sm text-on-surface-variant leading-relaxed">
+              <p className="font-body text-sm text-white/45 leading-relaxed">
                 Your emotional data is encrypted. You are in total control.
               </p>
             </div>
             <div className="mt-8 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-label text-on-surface">Data Privacy</span>
-                <span className="material-symbols-outlined text-primary">lock</span>
+                <span className="text-sm font-label text-sanctuary-ink">Data Privacy</span>
+                <span className="material-symbols-outlined text-sanctuary-sage">lock</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-label text-on-surface">Export Data</span>
-                <span className="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">
+                <span className="text-sm font-label text-sanctuary-ink">Export Data</span>
+                <span className="material-symbols-outlined text-sanctuary-sage cursor-pointer hover:scale-110 transition-transform">
                   download
                 </span>
               </div>
@@ -330,8 +330,8 @@ function ProfileContent() {
         {/* Recent Check-ins */}
         {moodLogs.length > 0 && (
           <section className="mb-20">
-            <div className="flex justify-between items-end mb-10 border-b border-outline-variant pb-6">
-              <h2 className="font-display text-3xl">Recent Check-ins</h2>
+            <div className="flex justify-between items-end mb-10 border-b border-white/10 pb-6">
+              <h2 className="font-headline text-3xl">Recent Check-ins</h2>
             </div>
             <div className="space-y-3">
               {[...moodLogs]
@@ -342,10 +342,10 @@ function ProfileContent() {
                   return (
                     <div
                       key={m.id}
-                      className="flex items-center gap-6 p-4 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors"
+                      className="flex items-center gap-6 p-4 bg-sanctuary-panel border border-white/[0.06] rounded-2xl hover:border-white/[0.12] transition-colors"
                     >
                       <div
-                        className="font-display text-2xl font-bold w-12 text-right"
+                        className="font-headline text-2xl font-bold w-12 text-right"
                         style={{ color }}
                       >
                         {m.mood_score}
@@ -355,12 +355,12 @@ function ProfileContent() {
                           {label}
                         </span>
                         {m.emotion_tag && (
-                          <span className="ml-2 px-2 py-0.5 bg-primary/10 text-primary rounded-full font-label text-xs">
+                          <span className="ml-2 px-2 py-0.5 bg-sanctuary-mauve/10 border border-sanctuary-mauve/30 text-sanctuary-mauve rounded-full font-label text-xs">
                             {m.emotion_tag}
                           </span>
                         )}
                       </div>
-                      <div className="font-label text-xs text-outline uppercase tracking-widest">
+                      <div className="font-label text-xs text-white/30 uppercase tracking-widest">
                         {new Date(m.created_at).toLocaleDateString()}
                       </div>
                     </div>
@@ -372,21 +372,21 @@ function ProfileContent() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full mt-auto bg-surface-container-lowest">
-        <div className="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full max-w-7xl mx-auto">
+      <footer className="w-full mt-auto border-t border-white/[0.06]">
+        <div className="flex flex-col md:flex-row justify-between items-center px-8 py-10 w-full max-w-7xl mx-auto">
           <div className="flex flex-col items-center md:items-start mb-8 md:mb-0">
-            <div className="font-headline text-xl text-on-surface mb-2">Mind Mate</div>
-            <p className="font-body text-sm text-on-secondary-fixed-variant">
-              © 2024 Mind Mate. Your path to mindful clarity.
+            <div className="font-headline text-xl text-sanctuary-ink mb-2">Mind Mate</div>
+            <p className="font-body text-sm text-white/30">
+              Your digital sanctuary.
             </p>
           </div>
           <nav className="flex flex-wrap justify-center gap-8">
-            {['Privacy Policy', 'Terms of Service', 'Contact Support', 'Our Methodology'].map(
+            {['Privacy', 'Terms', 'Support', 'Safety'].map(
               (link) => (
                 <a
                   key={link}
                   href="#"
-                  className="font-label text-xs uppercase tracking-widest text-on-secondary-fixed-variant hover:text-primary transition-colors"
+                  className="font-label text-xs uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors"
                 >
                   {link}
                 </a>

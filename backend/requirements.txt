@@ -14,7 +14,10 @@ redis>=5.0.3
 # ─── Auth & Security ─────────────────────────────────────────────────────────
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
-bcrypt>=4.0.1
+# NOTE: passlib 1.7.4 is incompatible with bcrypt>=4.1 (strict 72-byte limit
+# raises ValueError during backend init, breaking register/login with a 500).
+# Pinned to the last compatible version until passlib is replaced.
+bcrypt==4.0.1
 
 # ─── Config & Env ────────────────────────────────────────────────────────────
 python-dotenv>=1.0.1

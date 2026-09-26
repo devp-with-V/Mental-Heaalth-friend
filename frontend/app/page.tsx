@@ -11,6 +11,11 @@ const GENDER_OPTIONS = [
   { value: 'prefer_not_to_say', label: '✦ Prefer not to say' },
 ]
 
+const inputCls =
+  'w-full px-4 py-3 bg-white/[0.04] border border-white/10 rounded-xl focus:ring-1 focus:ring-sanctuary-terra focus:border-sanctuary-terra transition-all outline-none text-sanctuary-ink placeholder:text-white/25 text-sm'
+const labelCls =
+  'font-label text-xs uppercase tracking-widest text-white/45 ml-1'
+
 function SignInModal({
   onClose,
   onToggle,
@@ -43,29 +48,27 @@ function SignInModal({
   }
 
   return (
-    <div className="glass-panel w-full max-w-md rounded-2xl modal-shadow overflow-hidden fade-in">
-      <div className="p-8 md:p-12">
-        <div className="flex justify-between items-start mb-10">
-          <div className="font-headline text-2xl text-primary font-bold">Mind Mate</div>
-          <button className="text-outline hover:text-on-surface transition-colors" onClick={onClose}>
+    <div className="w-full max-w-md rounded-3xl modal-shadow overflow-hidden fade-in bg-sanctuary-panel border border-white/10">
+      <div className="p-8 md:p-10">
+        <div className="flex justify-between items-start mb-8">
+          <div className="font-headline text-2xl text-sanctuary-ink font-bold">Mind Mate</div>
+          <button className="text-white/40 hover:text-white/70 transition-colors" onClick={onClose}>
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
         <div className="mb-8">
-          <h2 className="font-headline text-3xl mb-2">Welcome Back</h2>
-          <p className="font-body text-on-surface-variant">Access your curated mental archive.</p>
+          <h2 className="font-headline text-3xl mb-2 text-sanctuary-ink">Welcome back</h2>
+          <p className="font-body text-white/45">Your sanctuary kept your place.</p>
         </div>
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-error-container text-on-error-container text-sm font-body">
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-400/30 text-red-200 text-sm font-body">
             {error}
           </div>
         )}
 
         <form className="space-y-5" onSubmit={submit}>
           <div className="space-y-1">
-            <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
-              Email Address
-            </label>
+            <label className={labelCls}>Email Address</label>
             <input
               id="login-email"
               name="email"
@@ -73,16 +76,12 @@ function SignInModal({
               value={form.email}
               onChange={handle}
               required
-              className="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"
+              className={inputCls}
               placeholder="name@example.com"
             />
           </div>
           <div className="space-y-1">
-            <div className="flex justify-between">
-              <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
-                Password
-              </label>
-            </div>
+            <label className={labelCls}>Password</label>
             <input
               id="login-password"
               name="password"
@@ -90,21 +89,21 @@ function SignInModal({
               value={form.password}
               onChange={handle}
               required
-              className="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"
+              className={inputCls}
               placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-lg shadow-primary/10 hover:opacity-90 transition-all active:scale-95 mt-4 disabled:opacity-50"
+            className="w-full bg-sanctuary-terra text-[#1d1410] py-4 rounded-full font-label text-sm uppercase tracking-widest font-bold hover:brightness-110 transition-all active:scale-95 mt-4 disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <p className="text-center mt-10 text-on-surface-variant text-sm font-body">
+        <p className="text-center mt-8 text-white/45 text-sm font-body">
           New to Mind Mate?{' '}
-          <button type="button" className="text-primary font-bold hover:underline" onClick={onToggle}>
+          <button type="button" className="text-sanctuary-terra font-bold hover:underline" onClick={onToggle}>
             Create an account
           </button>
         </p>
@@ -164,88 +163,78 @@ function SignUpModal({
   }
 
   return (
-    <div className="glass-panel w-full max-w-md rounded-2xl modal-shadow overflow-hidden fade-in h-auto max-h-[90vh] overflow-y-auto">
-      <div className="p-8 md:p-12">
+    <div className="w-full max-w-md rounded-3xl modal-shadow overflow-hidden fade-in h-auto max-h-[90vh] overflow-y-auto bg-sanctuary-panel border border-white/10">
+      <div className="p-8 md:p-10">
         <div className="flex justify-between items-start mb-8">
-          <div className="font-headline text-2xl text-primary font-bold">Mind Mate</div>
-          <button className="text-outline hover:text-on-surface transition-colors" onClick={onClose}>
+          <div className="font-headline text-2xl text-sanctuary-ink font-bold">Mind Mate</div>
+          <button className="text-white/40 hover:text-white/70 transition-colors" onClick={onClose}>
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
         <div className="mb-8">
-          <h2 className="font-headline text-3xl mb-2">Begin Your Journey</h2>
-          <p className="font-body text-on-surface-variant">Step into a world of mindful clarity.</p>
+          <h2 className="font-headline text-3xl mb-2 text-sanctuary-ink">Step inside</h2>
+          <p className="font-body text-white/45">Your sanctuary is waiting.</p>
         </div>
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-error-container text-on-error-container text-sm font-body">
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-400/30 text-red-200 text-sm font-body">
             {error}
           </div>
         )}
 
-
         <form className="space-y-4" onSubmit={submit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
-                First Name
-              </label>
+              <label className={labelCls}>First Name</label>
               <input
                 name="firstName"
                 type="text"
                 value={form.firstName}
                 onChange={handle}
                 required
-                className="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+                className={inputCls}
                 placeholder="Alex"
               />
             </div>
             <div className="space-y-1">
-              <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
-                Last Name
-              </label>
+              <label className={labelCls}>Last Name</label>
               <input
                 name="lastName"
                 type="text"
                 value={form.lastName}
                 onChange={handle}
-                className="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+                className={inputCls}
                 placeholder="Reed"
               />
             </div>
           </div>
           <div className="space-y-1">
-            <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
-              Email
-            </label>
+            <label className={labelCls}>Email</label>
             <input
               name="email"
               type="email"
               value={form.email}
               onChange={handle}
               required
-              className="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+              className={inputCls}
               placeholder="name@example.com"
             />
           </div>
           <div className="space-y-1">
-            <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
-              Password
-            </label>
+            <label className={labelCls}>Password</label>
             <input
               name="password"
               type="password"
               value={form.password}
               onChange={handle}
               required
-              className="w-full px-4 py-3 bg-white border border-outline-variant/20 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm"
+              className={inputCls}
               placeholder="At least 6 characters"
             />
           </div>
-          {/* Gender selection */}
           <div className="space-y-2">
-            <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
+            <label className={labelCls}>
               How do you identify?{' '}
-              <span className="text-outline normal-case tracking-normal">
+              <span className="normal-case tracking-normal text-white/30">
                 (helps The Guide feel more relatable)
               </span>
             </label>
@@ -257,8 +246,8 @@ function SignUpModal({
                   onClick={() => setForm((f) => ({ ...f, gender: opt.value }))}
                   className={`px-3 py-1.5 rounded-full font-label text-xs border transition-all ${
                     form.gender === opt.value
-                      ? 'bg-primary text-on-primary border-primary'
-                      : 'bg-white border-outline-variant/40 text-on-surface-variant hover:border-primary/50'
+                      ? 'bg-sanctuary-terra text-[#1d1410] border-sanctuary-terra font-bold'
+                      : 'bg-white/[0.04] border-white/15 text-white/50 hover:border-sanctuary-terra/50'
                   }`}
                 >
                   {opt.label}
@@ -272,25 +261,25 @@ function SignUpModal({
               type="checkbox"
               checked={form.agreed}
               onChange={handle}
-              className="mt-1 rounded border-outline-variant/50 text-primary focus:ring-primary"
+              className="mt-1 rounded border-white/20 accent-[#c98a6b]"
             />
-            <p className="text-xs text-on-surface-variant font-body leading-relaxed">
+            <p className="text-xs text-white/45 font-body leading-relaxed">
               I agree to the{' '}
-              <span className="text-primary underline cursor-pointer">Terms</span> and have read
-              the <span className="text-primary underline cursor-pointer">Privacy Policy</span>.
+              <span className="text-sanctuary-terra underline cursor-pointer">Terms</span> and have read
+              the <span className="text-sanctuary-terra underline cursor-pointer">Privacy Policy</span>.
             </p>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-lg shadow-primary/10 hover:opacity-90 transition-all active:scale-95 mt-4 disabled:opacity-50"
+            className="w-full bg-sanctuary-terra text-[#1d1410] py-4 rounded-full font-label text-sm uppercase tracking-widest font-bold hover:brightness-110 transition-all active:scale-95 mt-4 disabled:opacity-50"
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
-        <p className="text-center mt-8 text-on-surface-variant text-sm font-body">
+        <p className="text-center mt-8 text-white/45 text-sm font-body">
           Already have an account?{' '}
-          <button className="text-primary font-bold hover:underline" onClick={onToggle}>
+          <button className="text-sanctuary-terra font-bold hover:underline" onClick={onToggle}>
             Sign In
           </button>
         </p>
@@ -299,9 +288,61 @@ function SignUpModal({
   )
 }
 
+const COMPANIONS = [
+  {
+    emoji: '🌸',
+    name: 'Riya',
+    tag: 'warm · best friend',
+    quote: '“Tell me everything. I’m not going anywhere.”',
+    pill: 'Validation',
+    wash: 'bg-persona-riya/10',
+    border: 'border-persona-riya/30',
+    text: 'text-persona-riya',
+    rotate: '-rotate-6',
+    pos: 'left-[3%] top-[130px]',
+  },
+  {
+    emoji: '⚡',
+    name: 'Arjun',
+    tag: 'steady · grounding',
+    quote: '“One thing at a time. Heaviest first.”',
+    pill: '12 threads',
+    wash: 'bg-persona-arjun/10',
+    border: 'border-persona-arjun/30',
+    text: 'text-persona-arjun',
+    rotate: 'rotate-[5deg]',
+    pos: 'right-[3%] top-[80px]',
+  },
+  {
+    emoji: '🦁',
+    name: 'Alex',
+    tag: 'warm · direct',
+    quote: '“Proud of you for showing up.”',
+    pill: 'Advice',
+    wash: 'bg-persona-alex/10',
+    border: 'border-persona-alex/30',
+    text: 'text-persona-alex',
+    rotate: 'rotate-3',
+    pos: 'left-[6%] bottom-[50px]',
+  },
+  {
+    emoji: '🧘',
+    name: 'The Guide',
+    tag: 'quiet · spacious',
+    quote: 'A two-minute breathing room, whenever.',
+    pill: 'Breathe',
+    wash: 'bg-persona-guide/10',
+    border: 'border-persona-guide/30',
+    text: 'text-persona-guide',
+    rotate: '-rotate-3',
+    pos: 'right-[6%] bottom-[100px]',
+  },
+]
+
 function LandingContent() {
   const searchParams = useSearchParams()
   const [modal, setModal] = useState<'signIn' | 'signUp' | null>(null)
+  const phoneRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (searchParams.get('login') === 'true') {
@@ -315,234 +356,157 @@ function LandingContent() {
     setModal((m) => (m === 'signIn' ? 'signUp' : 'signIn'))
 
   return (
-    <>
-      {/* Header */}
-      <header className="w-full top-0 sticky bg-surface z-40 transition-colors duration-300">
-        <nav className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto w-full">
-          <div className="font-headline text-2xl font-bold text-primary">Mind Mate</div>
-          <div className="hidden md:flex items-center space-x-8">
-            {['Personas', 'Stories', 'Science', 'Library'].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-on-surface-variant hover:text-primary font-label text-sm uppercase tracking-wider transition-colors"
-              >
-                {item}
-              </a>
-            ))}
+    <div className="relative min-h-screen bg-sanctuary-ground text-sanctuary-ink overflow-x-hidden">
+      {/* Sanctuary washes */}
+      <div className="absolute -top-40 -left-32 w-[640px] h-[640px] rounded-full blur-[140px] pointer-events-none bg-sanctuary-mauve/10" />
+      <div className="absolute top-1/3 -right-40 w-[560px] h-[560px] rounded-full blur-[140px] pointer-events-none bg-sanctuary-terra/[0.07]" />
+      <div className="absolute bottom-0 left-1/3 w-[420px] h-[420px] rounded-full blur-[140px] pointer-events-none bg-sanctuary-sage/[0.06]" />
+
+      {/* Nav */}
+      <header className="relative z-10">
+        <nav className="flex items-center justify-between px-6 md:px-12 py-5 max-w-7xl mx-auto">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sanctuary-mauve to-sanctuary-terra flex items-center justify-center">
+              <span className="material-symbols-outlined text-[#14101d]" style={{ fontSize: '16px' }}>psychology</span>
+            </div>
+            <span className="font-headline text-lg font-bold tracking-tight">Mind Mate</span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8 font-label text-[13px] uppercase tracking-[0.14em] text-white/45">
+            <span className="text-sanctuary-ink">Sanctuary</span>
+            <span>Companions</span>
+            <span>Rituals</span>
+            <span>Safety</span>
+          </div>
+          <div className="flex items-center gap-3">
             <button
-              className="text-primary font-label text-sm uppercase tracking-wider font-semibold hover:opacity-80 transition-opacity"
+              className="font-label text-[13px] uppercase tracking-wider font-semibold text-white/60 hover:text-white/90 transition-colors"
               onClick={() => openModal('signIn')}
             >
               Sign In
             </button>
             <button
-              className="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-full font-label text-sm uppercase tracking-wider shadow-sm transition-all active:scale-95"
+              className="bg-sanctuary-mauve text-[#14101d] px-6 py-2.5 rounded-full font-label text-[13px] uppercase tracking-wider font-bold hover:brightness-110 transition-all active:scale-95"
               onClick={() => openModal('signUp')}
             >
-              Get Started
+              Enter ↓
             </button>
           </div>
         </nav>
       </header>
 
       {/* Hero */}
-      <main className="relative min-h-[921px] flex flex-col items-center justify-center px-6 py-20 text-center">
-        {/* Decorative background blurs */}
-        <div className="absolute top-1/4 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-1/4 -left-24 w-96 h-96 bg-secondary/5 rounded-full blur-[100px] pointer-events-none" />
-
-        <span className="font-label text-xs uppercase tracking-[0.2em] text-tertiary font-semibold mb-6 block">
-          An Anthology of Empathy
+      <main className="relative z-10 text-center px-6 pt-12 md:pt-16">
+        <span className="inline-block font-label text-[11px] uppercase tracking-[0.22em] text-sanctuary-sage border border-sanctuary-sage/30 bg-sanctuary-sage/[0.07] rounded-full px-5 py-2 mb-7">
+          ✦ &nbsp;A digital sanctuary&nbsp; ✦
         </span>
-        <h1 className="font-headline text-5xl md:text-7xl max-w-4xl leading-tight mb-8">
-          Nurture your narrative with{' '}
-          <span className="text-primary italic">scientific</span> clarity.
+        <h1 className="font-headline text-5xl md:text-7xl leading-[1.08] max-w-4xl mx-auto">
+          Enter your <em className="italic text-sanctuary-terra">sanctuary.</em>
+          <br />
+          Someone is awake with you.
         </h1>
-        <p className="font-body text-xl text-on-surface-variant max-w-2xl mb-12">
-          Join thousands of thinkers who use Mind Mate to map their cognitive landscapes through
-          premium, scholarly curation.
+        <p className="font-body text-lg text-white/50 leading-relaxed max-w-xl mx-auto mt-6">
+          Companions who remember you, keep your threads, and sit with you through
+          the 2 a.m. hours — warm, unhurried, and entirely yours.
         </p>
-        <div className="flex flex-wrap gap-4 justify-center mb-20">
+        <div className="flex flex-wrap gap-4 justify-center mt-9">
           <button
-            className="bg-primary text-on-primary px-8 py-4 rounded-full font-label text-sm uppercase tracking-widest hover:bg-primary-container transition-all flex items-center gap-2 group"
+            className="bg-sanctuary-terra text-[#1d1410] px-10 py-4 rounded-full font-label text-sm uppercase tracking-widest font-bold hover:brightness-110 transition-all active:scale-95 flex items-center gap-2"
             onClick={() => openModal('signUp')}
           >
-            Begin Your Journey
-            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
-              arrow_forward
-            </span>
+            Begin tonight
+            <span className="material-symbols-outlined text-base">arrow_forward</span>
           </button>
-          <button className="border-b-2 border-transparent hover:border-primary px-4 py-4 font-label text-sm uppercase tracking-widest text-on-surface transition-all">
-            View Methodology
+          <button
+            className="border border-white/15 text-sanctuary-ink px-10 py-4 rounded-full font-label text-sm uppercase tracking-widest hover:border-white/30 transition-all"
+            onClick={() => openModal('signIn')}
+          >
+            Meet the companions
           </button>
         </div>
 
-        {/* Feature cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
-          {[
-            {
-              icon: 'psychology',
-              title: 'Deep Personalization',
-              desc: 'Our algorithms respect your unique mental architecture, providing insights that evolve as you do.',
-            },
-            {
-              icon: 'menu_book',
-              title: 'Scholarly Library',
-              desc: 'Access a vast archive of curated mental models, philosophy, and neuroscience simplified for growth.',
-            },
-            {
-              icon: 'verified_user',
-              title: 'Ethical Privacy',
-              desc: 'Your data remains yours. We prioritize absolute transparency and local-first encryption methods.',
-            },
-          ].map((f) => (
+        {/* Stage: floating cards + phone */}
+        <div className="relative max-w-6xl mx-auto mt-6 h-[620px] hidden md:block">
+          {COMPANIONS.map((c) => (
             <div
-              key={f.title}
-              className="bg-surface-container-low p-10 rounded-xl text-left hover:bg-surface-container transition-colors group"
+              key={c.name}
+              className={`absolute w-[250px] bg-sanctuary-panel border border-white/[0.07] rounded-3xl p-5 text-left shadow-2xl ${c.rotate} ${c.pos}`}
             >
-              <span className="material-symbols-outlined text-4xl text-tertiary mb-6 block">
-                {f.icon}
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className={`w-9 h-9 rounded-xl ${c.wash} border ${c.border} flex items-center justify-center text-lg`}>
+                  {c.emoji}
+                </div>
+                <div>
+                  <div className="font-headline text-[15px]">{c.name}</div>
+                  <div className="text-[11px] text-white/35">{c.tag}</div>
+                </div>
+              </div>
+              <p className="font-headline text-[13px] leading-relaxed text-white/55">{c.quote}</p>
+              <span className={`inline-block font-label text-[10px] uppercase tracking-[0.14em] rounded-full px-3 py-1 mt-3 border ${c.border} ${c.text}`}>
+                {c.pill}
               </span>
-              <h3 className="font-headline text-2xl mb-4">{f.title}</h3>
-              <p className="text-on-surface-variant leading-relaxed">{f.desc}</p>
             </div>
           ))}
+
+          {/* Phone mockup */}
+          <div ref={phoneRef} className="absolute left-1/2 top-[30px] -translate-x-1/2 w-[330px] bg-sanctuary-panel border border-white/10 rounded-[48px] px-4 pt-4 pb-7 shadow-2xl">
+            <div className="w-[110px] h-[26px] bg-black/60 rounded-full mx-auto mb-4" />
+            <div className="flex items-center gap-2.5 px-1.5 pb-3.5">
+              <div className="w-9 h-9 rounded-xl bg-persona-riya/10 border border-persona-riya/30 flex items-center justify-center text-lg">🌸</div>
+              <div className="text-left">
+                <div className="font-headline text-[15px]">Riya</div>
+                <div className="text-[11px] text-sanctuary-sage">● here with you</div>
+              </div>
+            </div>
+            <div className="rounded-2xl rounded-tr-md bg-sanctuary-mauve/20 border border-sanctuary-mauve/30 px-4 py-3 text-[13.5px] leading-relaxed text-left ml-11 mb-2.5">
+              can&apos;t sleep. mind won&apos;t stop racing
+            </div>
+            <div className="rounded-2xl rounded-tl-md bg-sanctuary-panel-2 border border-white/[0.07] px-4 py-3 font-headline text-[13.5px] leading-relaxed text-left">
+              Then let&apos;s not fight it. Tell me one thought that&apos;s looping — we&apos;ll hold it together.
+              <span className="stream-cursor" />
+            </div>
+          </div>
         </div>
       </main>
 
-      {/* Personas Section */}
-      <section className="py-24 bg-surface-container-low">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="mb-20 text-center">
-            <h2 className="font-headline text-4xl mb-6">Choose Your Voice</h2>
-            <p className="font-body text-on-surface-variant max-w-2xl mx-auto italic">
-              Every story requires a different listener. Our AI personas are architected to meet you
-              exactly where your mind resides today.
-            </p>
+      {/* Rituals strip */}
+      <section className="relative z-10 max-w-6xl mx-auto px-6 pb-24 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { icon: 'nightlight', title: '2 a.m. ready', desc: 'Dark-first by design. No glaring whites when the night feels heavy.' },
+          { icon: 'history', title: 'Threads that persist', desc: 'Every conversation kept. Reopen any night and it replays exactly.' },
+          { icon: 'ecg_heart', title: 'Watched over', desc: 'Crisis language is met with care and real helplines, never silence.' },
+        ].map((f) => (
+          <div key={f.title} className="bg-sanctuary-panel border border-white/[0.07] rounded-3xl p-8 text-left">
+            <span className="material-symbols-outlined text-3xl text-sanctuary-sage mb-5 block">{f.icon}</span>
+            <h3 className="font-headline text-xl mb-3">{f.title}</h3>
+            <p className="text-white/45 text-[15px] leading-relaxed">{f.desc}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              {
-                icon: 'spa',
-                name: 'Riya',
-                role: 'The Compassionate Listener',
-                desc: 'Soft-spoken and nurturing, Riya focuses on validation and emotional safety during heavy moments.',
-                bg: 'bg-primary-fixed',
-                color: 'text-primary',
-              },
-              {
-                icon: 'psychology',
-                name: 'Arjun',
-                role: 'The Rational Strategist',
-                desc: 'Arjun offers structured cognitive frameworks to help you deconstruct anxiety and find logical paths forward.',
-                bg: 'bg-secondary-fixed',
-                color: 'text-on-secondary-fixed-variant',
-              },
-              {
-                icon: 'self_improvement',
-                name: 'Alex',
-                role: 'The Stoic Mentor',
-                desc: 'Grounded in ancient philosophy, Alex provides a calm perspective on the things within and outside your control.',
-                bg: 'bg-tertiary-fixed-dim',
-                color: 'text-on-tertiary-fixed',
-              },
-              {
-                icon: 'auto_awesome',
-                name: 'The Guide',
-                role: 'The Holistic Sage',
-                desc: 'A balanced fusion of all voices, designed for those seeking a broad, integrative approach to mental wellness.',
-                bg: 'bg-primary-container',
-                color: 'text-on-primary-container',
-              },
-            ].map((p) => (
-              <div
-                key={p.name}
-                className="group relative bg-surface-container-lowest p-8 rounded-xl transition-all duration-500 hover:-translate-y-2 persona-card"
-              >
-                <div
-                  className={`w-16 h-16 rounded-full ${p.bg} mb-6 flex items-center justify-center ${p.color}`}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    {p.icon}
-                  </span>
-                </div>
-                <h3 className="font-headline text-2xl mb-2">{p.name}</h3>
-                <p className="font-label text-xs text-tertiary mb-4 uppercase tracking-widest">
-                  {p.role}
-                </p>
-                <p className="font-body text-sm text-on-surface-variant leading-relaxed">{p.desc}</p>
-                <div className="mt-8">
-                  <button
-                    className="text-primary font-label text-xs uppercase tracking-widest hover:underline"
-                    onClick={() => openModal('signUp')}
-                  >
-                    Select Persona
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Banner */}
-      <section className="py-32 bg-primary text-on-primary">
-        <div className="max-w-7xl mx-auto px-8 flex flex-col items-center text-center space-y-10">
-          <h2 className="font-headline text-5xl md:text-6xl max-w-3xl leading-tight">
-            Begin your next chapter with clarity.
-          </h2>
-          <p className="font-body text-xl opacity-90 max-w-xl">
-            Join 200,000+ others finding peace in the digital age. Your first sessions are always on
-            us.
-          </p>
-          <button
-            className="bg-surface text-primary px-10 py-5 rounded-full font-label text-sm uppercase tracking-widest hover:bg-surface-bright transition-all shadow-lg"
-            onClick={() => openModal('signUp')}
-          >
-            Get Started — It&apos;s Free
-          </button>
-        </div>
+        ))}
       </section>
 
       {/* Footer */}
-      <footer className="bg-surface-container-lowest">
-        <div className="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full max-w-7xl mx-auto border-t border-outline-variant/10">
-          <div className="mb-8 md:mb-0 space-y-4">
-            <div className="font-headline text-xl text-on-surface">Mind Mate</div>
-            <p className="font-body text-sm text-on-secondary-fixed-variant max-w-xs">
-              © 2024 Mind Mate. Your path to mindful clarity.
-            </p>
+      <footer className="relative z-10 border-t border-white/[0.06]">
+        <div className="flex flex-col md:flex-row justify-between items-center px-8 py-10 w-full max-w-7xl mx-auto gap-6">
+          <div className="text-center md:text-left">
+            <div className="font-headline text-lg">Mind Mate</div>
+            <p className="font-body text-sm text-white/30 mt-1">Your digital sanctuary.</p>
           </div>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-            {['Privacy Policy', 'Terms of Service', 'Contact Support', 'Our Methodology'].map(
-              (link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="text-on-secondary-fixed-variant hover:text-primary font-label text-xs uppercase transition-colors"
-                >
-                  {link}
-                </a>
-              )
-            )}
+          <div className="flex flex-wrap justify-center gap-8">
+            {['Privacy', 'Terms', 'Support', 'Safety'].map((link) => (
+              <a key={link} href="#" className="text-white/30 hover:text-white/60 font-label text-xs uppercase transition-colors">
+                {link}
+              </a>
+            ))}
           </div>
         </div>
-        <p className="text-center pb-4 text-xs text-outline font-body">
-          Mind Mate is not a replacement for professional mental health care. If you are in crisis,
-          please contact a crisis line.
+        <p className="text-center pb-6 text-xs text-white/25 font-body px-6">
+          Mind Mate is a companion, not a clinician. In crisis: iCALL 9152987821 · Tele-MANAS 14416.
         </p>
       </footer>
 
       {/* Modal overlay */}
       {modal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/30 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
           onClick={(e) => e.target === e.currentTarget && closeModal()}
         >
           {modal === 'signIn' ? (
@@ -552,7 +516,7 @@ function LandingContent() {
           )}
         </div>
       )}
-    </>
+    </div>
   )
 }
 
@@ -560,8 +524,8 @@ export default function LandingPage() {
   return (
     <AuthGuard publicOnly>
       <Suspense fallback={
-        <div className="flex h-screen items-center justify-center bg-background">
-          <span className="material-symbols-outlined text-primary animate-spin text-5xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+        <div className="flex h-screen items-center justify-center bg-sanctuary-ground">
+          <span className="material-symbols-outlined text-sanctuary-terra animate-spin text-5xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             autorenew
           </span>
         </div>
