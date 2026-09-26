@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/api',
   timeout: 30000,
 })
 
@@ -25,7 +25,8 @@ api.interceptors.response.use(
         const refresh = localStorage.getItem('refresh_token')
         if (refresh) {
           try {
-            const { data } = await axios.post('/api/auth/refresh', {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/api'
+            const { data } = await axios.post(`${baseUrl}/auth/refresh`, {
               refresh_token: refresh,
             })
             localStorage.setItem('access_token', data.access_token)
@@ -81,7 +82,8 @@ export const chatApi = {
       // Try to refresh if we have a refresh token (catches expiry before stream opens)
       if (refresh) {
         try {
-          const { data } = await axios.post('/api/auth/refresh', { refresh_token: refresh })
+          const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/api'
+          const { data } = await axios.post(`${baseUrl}/auth/refresh`, { refresh_token: refresh })
           localStorage.setItem('access_token', data.access_token)
           localStorage.setItem('refresh_token', data.refresh_token)
           token = data.access_token
@@ -95,7 +97,8 @@ export const chatApi = {
     const params = new URLSearchParams({ content, persona_slug: personaSlug })
     if (conversationId) params.set('conversation_id', String(conversationId))
 
-    const response = await fetch(`/api/chat/stream?${params}`, {
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/api'
+    const response = await fetch(`${baseUrl}/chat/stream?${params}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,

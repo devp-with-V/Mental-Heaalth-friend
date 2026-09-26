@@ -31,10 +31,6 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # Clerk Auth (Hybrid Mode)
-    CLERK_SECRET_KEY: str = ""
-    CLERK_PUBLISHABLE_KEY: str = ""
-
     @property
     def cors_origins_list(self) -> List[str]:
         """Parse comma-separated CORS_ORIGINS into a list."""

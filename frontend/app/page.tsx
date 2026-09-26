@@ -2,55 +2,8 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { SignInButton, useAuth as useClerkAuth } from '@clerk/nextjs'
 import { useAuth } from '@/context/AuthContext'
 import AuthGuard from '@/components/AuthGuard'
-import axios from 'axios'
-
-function ClerkHybridSync() {
-  const clerkAuth = useClerkAuth()
-  const { user, loginWithTokens } = useAuth()
-  const router = useRouter()
-  const syncedRef = useRef(false)
-
-  useEffect(() => {
-    if (!clerkAuth.isLoaded || !clerkAuth.isSignedIn) return
-    if (user || syncedRef.current) return
-    
-    syncedRef.current = true
-    
-    clerkAuth.getToken().then(token => {
-      axios.post('/api/auth/clerk-login', { clerk_token: token })
-        .then(res => {
-          loginWithTokens(res.data.access_token, res.data.refresh_token)
-            .then(() => router.push('/chat'))
-            .catch(() => {})
-        })
-        .catch(err => {
-          console.error("Clerk sync failed", err)
-        })
-    }).catch(err => {
-      console.error("Failed to get Clerk token", err)
-    })
-  }, [clerkAuth.isLoaded, clerkAuth.isSignedIn, user, loginWithTokens, router])
-
-  // Show a loading overlay while syncing
-  if (clerkAuth.isSignedIn && !user && syncedRef.current) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
-        <div className="text-center">
-          <span className="material-symbols-outlined text-primary animate-spin text-5xl mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>
-            autorenew
-          </span>
-          <h2 className="font-headline text-xl text-on-surface">Securing your session...</h2>
-        </div>
-      </div>
-    )
-  }
-
-  return null
-}
-
 
 const GENDER_OPTIONS = [
   { value: 'male', label: '♂ Male' },
@@ -107,25 +60,7 @@ function SignInModal({
             {error}
           </div>
         )}
-        
-        {/* Clerk Sign In Button */}
-        <div className="mb-6">
-          <SignInButton mode="modal">
-            <button className="w-full flex items-center justify-center gap-3 bg-white border border-outline-variant/30 text-on-surface py-3 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-sm hover:bg-surface-container-lowest transition-all active:scale-95">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
-              Sign in with Google
-            </button>
-          </SignInButton>
-        </div>
 
-        <div className="relative mb-6 text-center">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-outline-variant/30" />
-          </div>
-          <span className="relative bg-white px-4 text-xs font-label uppercase tracking-widest text-outline">
-            or sign in with email
-          </span>
-        </div>
         <form className="space-y-5" onSubmit={submit}>
           <div className="space-y-1">
             <label className="font-label text-xs uppercase tracking-widest text-on-surface-variant ml-1">
@@ -247,24 +182,7 @@ function SignUpModal({
           </div>
         )}
 
-        {/* Clerk Sign Up Button */}
-        <div className="mb-6">
-          <SignInButton mode="modal">
-            <button className="w-full flex items-center justify-center gap-3 bg-white border border-outline-variant/30 text-on-surface py-3 rounded-full font-label text-sm uppercase tracking-widest font-bold shadow-sm hover:bg-surface-container-lowest transition-all active:scale-95">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
-              Sign up with Google
-            </button>
-          </SignInButton>
-        </div>
 
-        <div className="relative mb-6 text-center">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-outline-variant/30" />
-          </div>
-          <span className="relative bg-white px-4 text-xs font-label uppercase tracking-widest text-outline">
-            or personal email
-          </span>
-        </div>
         <form className="space-y-4" onSubmit={submit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
