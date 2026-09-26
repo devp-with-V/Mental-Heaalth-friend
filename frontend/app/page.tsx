@@ -316,7 +316,6 @@ function LandingContent() {
 
   return (
     <>
-      <ClerkHybridSync />
       {/* Header */}
       <header className="w-full top-0 sticky bg-surface z-40 transition-colors duration-300">
         <nav className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto w-full">

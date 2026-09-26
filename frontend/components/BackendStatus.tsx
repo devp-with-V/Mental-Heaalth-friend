@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 
-const HEALTH_ENDPOINT = '/api/health'
+const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || '').replace(/\/$/, '')
+// Static export (`output: 'export'`) has no Next.js rewrites, so a relative
+// `/api/health` would hit Vercel itself and 404 — ping the backend directly.
+const HEALTH_ENDPOINT = BACKEND_URL ? `${BACKEND_URL}/health` : '/api/health'
 const RETRY_INTERVAL_MS = 8000 // Check every 8 seconds
 const INITIAL_CHECK_TIMEOUT_MS = 6000 // Timeout for the initial check
 
