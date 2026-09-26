@@ -89,7 +89,7 @@ export default function BackendStatus() {
         {/* Pulsing icon */}
         <div className="mx-auto mb-8 w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center shadow-2xl shadow-violet-500/10">
           <span
-            className="material-symbols-outlined text-violet-400 animate-pulse"
+            className="material-symbols-outlined text-sanctuary-mauve animate-pulse"
             style={{ fontSize: '36px', fontVariationSettings: "'FILL' 1" }}
           >
             cloud_sync

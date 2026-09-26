@@ -25,10 +25,10 @@ export default function AuthGuard({ children, publicOnly = false }: AuthGuardPro
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
+      <div className="flex h-screen items-center justify-center bg-sanctuary-ground">
         <div className="flex flex-col items-center gap-4">
           <span
-            className="material-symbols-outlined text-primary animate-spin text-5xl"
+            className="material-symbols-outlined text-sanctuary-terra animate-spin text-5xl"
             style={{ fontVariationSettings: "'FILL' 1" }}
           >
             autorenew

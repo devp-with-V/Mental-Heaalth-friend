@@ -46,7 +46,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${notoSerif.variable} ${inter.variable} ${publicSans.variable} bg-background text-on-background antialiased overflow-x-hidden`}
+        className={`${notoSerif.variable} ${inter.variable} ${publicSans.variable} bg-sanctuary-ground text-sanctuary-ink antialiased overflow-x-hidden sanctuary-grain`}
         style={{ fontFamily: 'var(--font-inter), sans-serif' }}
       >
           <BackendStatus />
