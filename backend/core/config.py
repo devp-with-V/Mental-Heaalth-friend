@@ -13,11 +13,11 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     # Single default model (kept for backward compatibility).
-    OPENROUTER_MODEL: str = "openrouter/free"
+    OPENROUTER_MODEL: str = "mistralai/mistral-7b-instruct:free"
     # Ordered fallback chain, smartest/preferred first, comma-separated.
     # If a model is unavailable, rate-limited, or errors, the next one is tried.
     # Falls back to OPENROUTER_MODEL if left empty.
-    OPENROUTER_MODELS: str = ""
+    OPENROUTER_MODELS: str = "mistralai/mistral-7b-instruct:free"
 
     # Database
     DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/mindmate"
@@ -30,10 +30,6 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-
-    # Clerk Auth (Hybrid Mode)
-    CLERK_SECRET_KEY: str = ""
-    CLERK_PUBLISHABLE_KEY: str = ""
 
     @property
     def cors_origins_list(self) -> List[str]:

@@ -8,9 +8,8 @@ from core.security import (
 )
 from models.db_models import User
 from schemas.pydantic_models import (
-    UserRegister, UserLogin, ClerkLogin, Token, TokenRefresh, UserOut, UserUpdate
+    UserRegister, UserLogin, Token, TokenRefresh, UserOut, UserUpdate
 )
-from services import clerk
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -43,52 +42,6 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    token_data = {"sub": str(user.id), "tier": user.subscription_tier or "free"}
-    access_token = create_access_token(token_data)
-    refresh_token = create_refresh_token({"sub": str(user.id)})
-    return Token(access_token=access_token, refresh_token=refresh_token)
-
-
-@router.post("/clerk-login", response_model=Token)
-async def clerk_login(payload: ClerkLogin, db: Session = Depends(get_db)):
-    """
-    Hybrid flow: Verifies the Clerk session token, fetches the user's email/name from Clerk,
-    and returns a standard custom JWT for the rest of the application.
-    """
-    clerk_sub = await clerk.verify_clerk_token(payload.clerk_token)
-    
-    # Fetch details from Clerk
-    clerk_user_data = await clerk.get_clerk_user(clerk_sub)
-    
-    email = ""
-    # Clerk users can have multiple emails; grab the primary one
-    primary_email_id = clerk_user_data.get("primary_email_address_id")
-    for email_obj in clerk_user_data.get("email_addresses", []):
-        if email_obj.get("id") == primary_email_id:
-            email = email_obj.get("email_address")
-            break
-            
-    if not email:
-        raise HTTPException(status_code=400, detail="Clerk user has no primary email")
-        
-    # See if user exists in our DB
-    user = db.query(User).filter(User.email == email).first()
-    
-    if not user:
-        # Create a new user (with a dummy secure password since they use Google/Clerk)
-        name = clerk_user_data.get("first_name", "") or clerk_user_data.get("username", "") or email.split("@")[0]
-        
-        user = User(
-            email=email,
-            password_hash=hash_password(secrets.token_urlsafe(32)),
-            name=name,
-            gender="prefer_not_to_say",
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        
-    # Generate our custom JWT
     token_data = {"sub": str(user.id), "tier": user.subscription_tier or "free"}
     access_token = create_access_token(token_data)
     refresh_token = create_refresh_token({"sub": str(user.id)})

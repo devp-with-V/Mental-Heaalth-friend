@@ -1,17 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async rewrites() {
-    // On Vercel: set BACKEND_URL in project settings (e.g. https://your-app.onrender.com)
-    // In local dev: falls back to http://localhost:8000
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
-      },
-    ]
-  },
+  output: 'export',
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

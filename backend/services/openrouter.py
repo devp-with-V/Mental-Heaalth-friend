@@ -20,14 +20,29 @@ from core.config import settings
 
 logger = logging.getLogger("mindmate.openrouter")
 
-client = AsyncOpenAI(
-    api_key=settings.OPENROUTER_API_KEY,
-    base_url=settings.OPENROUTER_BASE_URL,
-    default_headers={
-        "HTTP-Referer": "https://mindmate.app",
-        "X-Title": "MindMate",
-    },
-)
+_client: AsyncOpenAI | None = None
+
+
+def _get_client() -> AsyncOpenAI:
+    """
+    Lazily construct the OpenAI-compatible client on first use (not at import).
+
+    Import-time construction crashed the whole app when OPENROUTER_API_KEY was
+    empty — the openai package raises OpenAIError for missing credentials.
+    Deferring keeps the app bootable (health/auth/mood work) while chat
+    endpoints degrade to the 503 fallback until a key is configured.
+    """
+    global _client
+    if _client is None:
+        _client = AsyncOpenAI(
+            api_key=settings.OPENROUTER_API_KEY,
+            base_url=settings.OPENROUTER_BASE_URL,
+            default_headers={
+                "HTTP-Referer": "https://mindmate.app",
+                "X-Title": "MindMate",
+            },
+        )
+    return _client
 
 
 class AllModelsFailedError(RuntimeError):
@@ -46,7 +61,7 @@ async def chat_completion(messages: List[Dict[str, str]]) -> str:
 
     for model in models:
         try:
-            response = await client.chat.completions.create(
+            response = await _get_client().chat.completions.create(
                 model=model,
                 messages=messages,
                 temperature=0.7,
@@ -92,7 +107,7 @@ async def chat_completion_stream(
     for model in models:
         emitted = False
         try:
-            stream = await client.chat.completions.create(
+            stream = await _get_client().chat.completions.create(
                 model=model,
                 messages=messages,
                 temperature=0.7,
